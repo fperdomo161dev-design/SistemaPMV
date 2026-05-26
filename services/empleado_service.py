@@ -3,7 +3,7 @@
 from typing import List, Optional
 from dataclasses import asdict
 
-from conexion import get_db
+from database.conexion import get_db
 from models.empleado import Empleado
 
 db = get_db()
