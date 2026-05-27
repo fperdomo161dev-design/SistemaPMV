@@ -19,40 +19,55 @@ Desarrollar un sistema modular, económico y fácil de implementar que permita:
 - Escalar futuras funcionalidades como facturación y reportes
 
 ---
+# Stack tecnológico 
 
-# Tecnologías utilizadas
-
-| Tecnología | Uso |
+| Tecnología | Justificación |
 |---|---|
-| Python | Lógica principal del sistema |
-| MongoDB | Base de datos NoSQL |
-| PyMongo | Conexión entre Python y MongoDB |
-| Tkinter | Interfaz gráfica |
-| Git | Control de versiones |
-| GitHub | Trabajo colaborativo y repositorio remoto |
-| Visual Studio Code | Entorno de desarrollo |
+| Python | Permite desarrollar aplicaciones rápidas, modulares y fáciles de mantener. |
+| Tkinter | Facilita la creación de interfaces gráficas locales sin depender de tecnologías web. |
+| MongoDB | Base de datos NoSQL flexible y ligera para gestionar inventario y usuarios. |
+| PyMongo | Permite integrar Python con MongoDB de manera sencilla. |
+| Git | Control de versiones para seguimiento del desarrollo. |
+| GitHub | Trabajo colaborativo y respaldo del proyecto. |
+| Visual Studio Code | Entorno de desarrollo utilizado por el equipo. |
 
 ---
 
-# Arquitectura del sistema
+# Descripción de componentes
 
-El proyecto utiliza una arquitectura modular organizada por capas para facilitar el mantenimiento, la escalabilidad y la implementación local en pequeños negocios que requieren soluciones tecnológicas accesibles.
+El sistema se encuentra organizado mediante una arquitectura modular por capas:
 
-## Componentes principales
+## UI
 
-### UI
-Contiene la interfaz gráfica y las ventanas del sistema.
+Gestiona la interfaz gráfica del sistema, ventanas, formularios y eventos del usuario.
 
-### Services
-Implementa la lógica de negocio y comunicación entre la interfaz y la base de datos.
+## Services
 
-### Models
-Representa las entidades principales del sistema, como productos y empleados.
+Contiene la lógica de negocio y comunicación entre la interfaz y la base de datos.
 
-### Database
-Gestiona la conexión centralizada con MongoDB mediante PyMongo.
+## Models
+
+Representa las entidades principales del sistema como productos y empleados.
+
+## Database
+
+Centraliza la conexión con MongoDB mediante PyMongo.
 
 ---
+
+# Flujo general del sistema
+
+```text
+Usuario
+   ↓
+Interfaz gráfica (UI)
+   ↓
+Servicios (Services)
+   ↓
+Modelos (Models)
+   ↓
+MongoDB
+```
 
 # Estructura del proyecto
 
