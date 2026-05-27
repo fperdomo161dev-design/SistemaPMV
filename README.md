@@ -324,7 +324,7 @@ El proyecto cuenta actualmente con:
 
 
 ---
-## Pantalla de inicio del sistema
+## Trabajo colaborativo
 
 ![Ingreso](docs/commit.png)
 
