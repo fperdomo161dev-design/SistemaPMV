@@ -324,6 +324,12 @@ El proyecto cuenta actualmente con:
 
 
 ---
+## Pantalla de inicio del sistema
+
+![Ingreso](docs/commit.png)
+
+
+---
 
 # Recursos adicionales
 
@@ -342,6 +348,7 @@ El proyecto incluye:
 - Yovanna Rodríguez
 
 ---
+
 
 # Estado del proyecto
 
