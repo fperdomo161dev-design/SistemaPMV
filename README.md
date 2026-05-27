@@ -306,21 +306,22 @@ El proyecto cuenta actualmente con:
 
 ---
 
-## Pantalla de inicio del sistema
-
-![Ingreso](docs/ingreso.png)
-
----
-
 ## Login principal
 
 ![Login](docs/login.png)
-
 ---
 
 ## Validación de acceso
 
 ![Login1](docs/login1.png)
+
+---
+
+
+## Pantalla de inicio del sistema
+
+![Ingreso](docs/ingreso.png)
+
 
 ---
 
