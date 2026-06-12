@@ -165,6 +165,27 @@ class ProductosFrame(ttk.Frame):
         self.var_valor = tk.StringVar()
         self.var_ubicacion = tk.StringVar()
 
+        ttk.Label(formulario, text="Referencia").grid(row=0, column=0)
+        tk.Entry(formulario, textvariable=self.var_ref).grid(row=0, column=1)
+
+        ttk.Label(formulario, text="Marca").grid(row=1, column=0)
+        tk.Entry(formulario, textvariable=self.var_marca).grid(row=1, column=1)
+
+        ttk.Label(formulario, text="Talla").grid(row=2, column=0)
+        tk.Entry(formulario, textvariable=self.var_talla).grid(row=2, column=1)
+
+        ttk.Label(formulario, text="Color").grid(row=3, column=0)
+        tk.Entry(formulario, textvariable=self.var_color).grid(row=3, column=1)
+
+        ttk.Label(formulario, text="Stock").grid(row=4, column=0)
+        tk.Entry(formulario, textvariable=self.var_stock).grid(row=4, column=1)
+
+        ttk.Label(formulario, text="Valor").grid(row=5, column=0)
+        tk.Entry(formulario, textvariable=self.var_valor).grid(row=5, column=1)
+
+        ttk.Label(formulario, text="Ubicación").grid(row=6, column=0)
+        tk.Entry(formulario, textvariable=self.var_ubicacion).grid(row=6, column=1)
+
     # CARGAR PRODUCTOS
 
     def cargar_productos(self):
