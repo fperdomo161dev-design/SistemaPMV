@@ -292,6 +292,31 @@ class ProductosFrame(ttk.Frame):
                 f"No se pudo actualizar.\nDetalle: {e}"
             )
 
+    def eliminar_producto_ui(self):
+
+        if self.producto_seleccionado is None:
+            messagebox.showwarning(
+                "Advertencia",
+                "Debes seleccionar un producto para eliminar."
+            )
+            return
+
+        try:
+            eliminar_producto(self.producto_seleccionado)
+
+            self.cargar_productos()
+
+            messagebox.showinfo(
+                "Eliminado",
+                "Producto eliminado correctamente."
+            )
+
+        except Exception as e:
+            messagebox.showerror(
+                "Error",
+                f"No se pudo eliminar.\nDetalle: {e}"
+            )
+
 
     def cargar_productos(self):
 
