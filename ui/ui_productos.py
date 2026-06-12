@@ -226,6 +226,73 @@ class ProductosFrame(ttk.Frame):
 
     # CARGAR PRODUCTOS
 
+
+    def guardar_producto(self):
+
+        try:
+            producto = Producto(
+                numReferencia=int(self.var_ref.get()),
+                marca=self.var_marca.get(),
+                talla=self.var_talla.get(),
+                color=self.var_color.get(),
+                cantidadStock=int(self.var_stock.get()),
+                valor=int(self.var_valor.get()),
+                ubicacion=self.var_ubicacion.get()
+            )
+
+            crear_producto(producto)
+
+            self.cargar_productos()
+
+            messagebox.showinfo(
+                "Éxito",
+                "Producto guardado correctamente."
+            )
+
+        except Exception as e:
+            messagebox.showerror(
+                "Error",
+                f"No se pudo guardar el producto.\nDetalle: {e}"
+            )
+
+    def actualizar_producto_ui(self):
+
+        if self.producto_seleccionado is None:
+            messagebox.showwarning(
+                "Advertencia",
+                "Debes seleccionar un producto para actualizar."
+            )
+            return
+
+        try:
+            datos = {
+                "marca": self.var_marca.get(),
+                "talla": self.var_talla.get(),
+                "color": self.var_color.get(),
+                "cantidadStock": int(self.var_stock.get()),
+                "valor": int(self.var_valor.get()),
+                "ubicacion": self.var_ubicacion.get()
+            }
+
+            actualizar_producto(
+                self.producto_seleccionado,
+                datos
+            )
+
+            self.cargar_productos()
+
+            messagebox.showinfo(
+                "Actualizado",
+                "Producto actualizado correctamente."
+            )
+
+        except Exception as e:
+            messagebox.showerror(
+                "Error",
+                f"No se pudo actualizar.\nDetalle: {e}"
+            )
+
+
     def cargar_productos(self):
 
         for row in self.tree.get_children():
