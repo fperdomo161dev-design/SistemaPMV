@@ -317,6 +317,25 @@ class ProductosFrame(ttk.Frame):
                 f"No se pudo eliminar.\nDetalle: {e}"
             )
 
+    def seleccionar_producto(self, event):
+
+        seleccion = self.tree.selection()
+
+        if not seleccion:
+            return
+
+        valores = self.tree.item(seleccion[0])["values"]
+
+        self.producto_seleccionado = valores[0]
+
+        self.var_ref.set(valores[0])
+        self.var_marca.set(valores[1])
+        self.var_talla.set(valores[2])
+        self.var_color.set(valores[3])
+        self.var_stock.set(valores[4])
+        self.var_valor.set(valores[5])
+        self.var_ubicacion.set(valores[6])        
+
 
     def cargar_productos(self):
 
