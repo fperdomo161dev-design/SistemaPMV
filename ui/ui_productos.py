@@ -403,3 +403,20 @@ class ProductosFrame(ttk.Frame):
         self.var_buscar.set("")
 
         self.cargar_productos()
+
+    # limpiar formulario
+
+    def limpiar_formulario(self):
+
+     # Limpia todos los campos del formulario
+      self.var_ref.set("")
+      self.var_marca.set("")
+      self.var_talla.set("")
+      self.var_color.set("")
+      self.var_stock.set("")
+      self.var_valor.set("")
+      self.var_ubicacion.set("")
+
+      self.producto_seleccionado = None
+
+      
