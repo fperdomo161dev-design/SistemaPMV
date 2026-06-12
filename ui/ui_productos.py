@@ -134,50 +134,36 @@ class ProductosFrame(ttk.Frame):
             height=14,
         )
 
-        columnas = [
-            ("ref", "Ref", 80),
-            ("marca", "Marca", 120),
-            ("talla", "Talla", 80),
-            ("color", "Color", 120),
-            ("stock", "Stock", 80),
-            ("valor", "Valor", 120),
-            ("ubicacion", "Ubicación", 120),
-        ]
+        # encabezado de tabla
 
-        for col, texto, ancho in columnas:
+        self.tree.heading("ref", text="Referencia")
+        self.tree.heading("marca", text="Marca")
+        self.tree.heading("talla", text="Talla")
+        self.tree.heading("color", text="Color")
+        self.tree.heading("stock", text="Stock")
+        self.tree.heading("valor", text="Valor")
+        self.tree.heading("ubicacion", text="Ubicación")
 
-            self.tree.heading(
-                col,
-                text=texto
-            )
+        self.tree.grid(row=0, column=0, sticky="nsew")
 
-            self.tree.column(
-                col,
-                width=ancho,
-                anchor="center"
-            )
+         # FORMULARIO
+        formulario = ttk.Frame(outer)
 
-        self.tree.grid(
-            row=0,
+        formulario.grid(
+            row=2,
             column=0,
-            sticky="nsew"
+            pady=20,
+            sticky="w"
         )
 
-        scrollbar = ttk.Scrollbar(
-            tabla_frame,
-            orient="vertical",
-            command=self.tree.yview
-        )
-
-        self.tree.configure(
-            yscrollcommand=scrollbar.set
-        )
-
-        scrollbar.grid(
-            row=0,
-            column=1,
-            sticky="ns"
-        )
+        # VARIABLES
+        self.var_ref = tk.StringVar()
+        self.var_marca = tk.StringVar()
+        self.var_talla = tk.StringVar()
+        self.var_color = tk.StringVar()
+        self.var_stock = tk.StringVar()
+        self.var_valor = tk.StringVar()
+        self.var_ubicacion = tk.StringVar()
 
     # CARGAR PRODUCTOS
 
