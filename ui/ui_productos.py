@@ -186,6 +186,44 @@ class ProductosFrame(ttk.Frame):
         ttk.Label(formulario, text="Ubicación").grid(row=6, column=0)
         tk.Entry(formulario, textvariable=self.var_ubicacion).grid(row=6, column=1)
 
+          # botones
+        botones_frame = ttk.Frame(formulario)
+
+        botones_frame.grid(
+            row=7,
+            column=0,
+            columnspan=2,
+            pady=15
+        )
+
+        # boton guardar
+        ttk.Button(
+            botones_frame,
+            text="Guardar",
+            command=self.guardar_producto
+        ).grid(row=0, column=0)
+
+        # boton actualizar
+        ttk.Button(
+            botones_frame,
+            text="Actualizar",
+            command=self.actualizar_producto_ui
+        ).grid(row=0, column=1)
+
+        # boton eliminar
+        ttk.Button(
+            botones_frame,
+            text="Eliminar",
+            command=self.eliminar_producto_ui
+        ).grid(row=0, column=2)
+
+        # boton limpiar formulario
+        ttk.Button(
+           botones_frame,
+            text="Limpiar",
+            command=self.limpiar_formulario
+            ).grid(row=0, column=3)
+
     # CARGAR PRODUCTOS
 
     def cargar_productos(self):
