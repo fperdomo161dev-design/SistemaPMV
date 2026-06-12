@@ -224,7 +224,7 @@ class ProductosFrame(ttk.Frame):
             command=self.limpiar_formulario
             ).grid(row=0, column=3)
 
-    # CARGAR PRODUCTOS
+ # logica de interfaz 
 
 
     def guardar_producto(self):
@@ -339,34 +339,25 @@ class ProductosFrame(ttk.Frame):
 
     def cargar_productos(self):
 
-        for row in self.tree.get_children():
+        for item in self.tree.get_children():
+            self.tree.delete(item)
 
-            self.tree.delete(row)
-
-        productos = listar_productos()
-
-        for p in productos:
+        for producto in listar_productos():
 
             self.tree.insert(
                 "",
                 "end",
                 values=(
-
-                    p.numReferencia,
-
-                    p.marca,
-
-                    p.talla,
-
-                    p.color,
-
-                    p.cantidadStock,
-
-                    p.valor,
-
-                    p.ubicacion,
-                ),
+                    producto.numReferencia,
+                    producto.marca,
+                    producto.talla,
+                    producto.color,
+                    producto.cantidadStock,
+                    producto.valor,
+                    producto.ubicacion
+                )
             )
+
     # BUSCAR
     def buscar_por_ref(self):
 
