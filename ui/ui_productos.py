@@ -30,6 +30,8 @@ class ProductosFrame(ttk.Frame):
 
         self.cargar_productos()
 
+        self.tree.bind("<<TreeviewSelect>>", self.seleccionar_producto)
+
     def _build_ui(self):
 
         outer = ttk.Frame(self)
