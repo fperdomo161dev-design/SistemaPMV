@@ -3,7 +3,14 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-from services.producto_service import listar_productos
+from services.producto_service import (
+    listar_productos,
+    crear_producto,
+    actualizar_producto,
+    eliminar_producto
+)
+
+from models.producto import Producto
 
 
 COLOR_INPUT_BG = "#050509"
