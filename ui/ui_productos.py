@@ -358,60 +358,44 @@ class ProductosFrame(ttk.Frame):
                 )
             )
 
-    # BUSCAR
+    
     def buscar_por_ref(self):
 
         texto = self.var_buscar.get().strip()
 
         if not texto:
-
             self.cargar_productos()
-
             return
 
         try:
-
             ref_buscar = int(texto)
-
         except ValueError:
-
             messagebox.showerror(
                 "Error",
                 "La referencia debe ser numérica."
             )
-
             return
 
         for row in self.tree.get_children():
-
             self.tree.delete(row)
 
         for p in listar_productos():
-
             if int(p.numReferencia) == ref_buscar:
-
                 self.tree.insert(
                     "",
                     "end",
                     values=(
-
                         p.numReferencia,
-
                         p.marca,
-
                         p.talla,
-
                         p.color,
-
                         p.cantidadStock,
-
                         p.valor,
-
                         p.ubicacion,
                     ),
                 )
-
                 break
+
 
     # LIMPIAR
     def limpiar_busqueda(self):
