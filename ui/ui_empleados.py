@@ -108,3 +108,14 @@ class EmpleadosFrame(ttk.Frame):
 
         ttk.Label(form, text="Clave").grid(row=4, column=0)
         tk.Entry(form, textvariable=self.var_clave, show="*").grid(row=4, column=1)
+
+        #botones    
+
+        btn = ttk.Frame(form)
+
+        btn.grid(row=5, column=0, columnspan=2, pady=10)
+
+        ttk.Button(btn, text="Guardar", command=self.guardar).grid(row=0, column=0)
+        ttk.Button(btn, text="Actualizar", command=self.actualizar).grid(row=0, column=1)
+        ttk.Button(btn, text="Eliminar", command=self.eliminar).grid(row=0, column=2)
+        ttk.Button(btn, text="Limpiar", command=self.limpiar_formulario).grid(row=0, column=3)
