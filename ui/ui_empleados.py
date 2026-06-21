@@ -58,3 +58,24 @@ class EmpleadosFrame(ttk.Frame):
 
         ttk.Button(search, text="Buscar", command=self.buscar).grid(row=0, column=2)
         ttk.Button(search, text="Limpiar", command=self.limpiar_busqueda).grid(row=0, column=3)
+
+        frame = ttk.Frame(outer)
+
+        frame.grid(row=1, column=0, sticky="nsew")
+
+        frame.columnconfigure(0, weight=1)
+        frame.rowconfigure(0, weight=1)
+
+        self.tree = ttk.Treeview(
+            frame,
+            columns=("cedula", "nombre", "cargo", "usuario"),
+            show="headings",
+            height=14
+        )
+
+        self.tree.heading("cedula", text="Cédula")
+        self.tree.heading("nombre", text="Nombre")
+        self.tree.heading("cargo", text="Cargo")
+        self.tree.heading("usuario", text="Usuario")
+
+        self.tree.grid(row=0, column=0, sticky="nsew")
