@@ -119,3 +119,84 @@ class EmpleadosFrame(ttk.Frame):
         ttk.Button(btn, text="Actualizar", command=self.actualizar).grid(row=0, column=1)
         ttk.Button(btn, text="Eliminar", command=self.eliminar).grid(row=0, column=2)
         ttk.Button(btn, text="Limpiar", command=self.limpiar_formulario).grid(row=0, column=3)
+
+        # instrucciones boton guardar
+
+    def guardar(self):
+
+        try:
+            emp = Empleado(
+                cedula=self.var_cedula.get(),
+                nombre=self.var_nombre.get(),
+                cargo=self.var_cargo.get(),
+                usuario=self.var_usuario.get(),
+                clave=self.var_clave.get()
+            )
+
+            ok = crear_empleado(emp)
+
+            if not ok:
+                messagebox.showwarning("Aviso", "La cédula ya existe")
+                return
+
+            self.cargar_empleados()
+            messagebox.showinfo("OK", "Empleado creado correctamente")
+
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
+
+            # instrucciones boton actualizar
+    def guardar(self):
+
+        try:
+            emp = Empleado(
+                cedula=self.var_cedula.get(),
+                nombre=self.var_nombre.get(),
+                cargo=self.var_cargo.get(),
+                usuario=self.var_usuario.get(),
+                clave=self.var_clave.get()
+            )
+
+            ok = crear_empleado(emp)
+
+            if not ok:
+                messagebox.showwarning("Aviso", "La cédula ya existe")
+                return
+
+            self.cargar_empleados()
+            messagebox.showinfo("OK", "Empleado creado correctamente")
+
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
+
+            # instrucciones boton eliminar
+    def eliminar(self):
+
+        if not self.empleado_seleccionado:
+            messagebox.showwarning("Aviso", "Selecciona un empleado")
+            return
+
+        try:
+            eliminar_empleado(self.empleado_seleccionado)
+
+            self.cargar_empleados()
+            messagebox.showinfo("OK", "Empleado eliminado correctamente")
+
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
+
+            # Seleccion
+    def seleccionar_empleado(self, event):
+
+             sel = self.tree.selection()
+             if not sel:
+              return
+
+              v = self.tree.item(sel[0])["values"]
+
+              self.empleado_seleccionado = v[0]
+
+              self.var_cedula.set(v[0])
+              self.var_nombre.set(v[1])
+              self.var_cargo.set(v[2])
+              self.var_usuario.set(v[3])
