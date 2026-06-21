@@ -4,6 +4,7 @@ from datetime import datetime
 
 from models.empleado import Empleado
 from ui.ui_productos import ProductosFrame
+from ui.ui_empleados import EmpleadosFrame
 
 # COLORES
 
@@ -217,6 +218,7 @@ class MainWindow(tk.Toplevel):
         # BOTONES MENU
         botones = [
             ("Productos", "productos"),
+            ("Empleados", "empleados"),
         ]
 
         for texto, vista in botones:
@@ -361,6 +363,29 @@ class MainWindow(tk.Toplevel):
         )
 
         self.frames_contenido["productos"] = frame_productos
+
+        frame_empleados = EmpleadosFrame(
+            self.content_container
+        )
+
+        frame_empleados.grid(
+            row=0,
+            column=0,
+            sticky="nsew"
+        )
+
+        frame_empleados = EmpleadosFrame(
+       self.content_container
+    )
+
+        frame_empleados.grid(
+        row=0,
+       column=0,
+      sticky="nsew"
+   )
+
+        self.frames_contenido["empleados"] = frame_empleados
+    
 
     # CAMBIAR VISTA
 
