@@ -59,6 +59,8 @@ class EmpleadosFrame(ttk.Frame):
         ttk.Button(search, text="Buscar", command=self.buscar).grid(row=0, column=2)
         ttk.Button(search, text="Limpiar", command=self.limpiar_busqueda).grid(row=0, column=3)
 
+        # Tabla de empleados
+
         frame = ttk.Frame(outer)
 
         frame.grid(row=1, column=0, sticky="nsew")
@@ -79,3 +81,30 @@ class EmpleadosFrame(ttk.Frame):
         self.tree.heading("usuario", text="Usuario")
 
         self.tree.grid(row=0, column=0, sticky="nsew")
+
+        # Formulario
+
+        form = ttk.Frame(outer)
+
+        form.grid(row=2, column=0, pady=20, sticky="w")
+
+        self.var_cedula = tk.StringVar()
+        self.var_nombre = tk.StringVar()
+        self.var_cargo = tk.StringVar()
+        self.var_usuario = tk.StringVar()
+        self.var_clave = tk.StringVar()
+
+        ttk.Label(form, text="Cédula").grid(row=0, column=0)
+        tk.Entry(form, textvariable=self.var_cedula).grid(row=0, column=1)
+
+        ttk.Label(form, text="Nombre").grid(row=1, column=0)
+        tk.Entry(form, textvariable=self.var_nombre).grid(row=1, column=1)
+
+        ttk.Label(form, text="Cargo").grid(row=2, column=0)
+        tk.Entry(form, textvariable=self.var_cargo).grid(row=2, column=1)
+
+        ttk.Label(form, text="Usuario").grid(row=3, column=0)
+        tk.Entry(form, textvariable=self.var_usuario).grid(row=3, column=1)
+
+        ttk.Label(form, text="Clave").grid(row=4, column=0)
+        tk.Entry(form, textvariable=self.var_clave, show="*").grid(row=4, column=1)
