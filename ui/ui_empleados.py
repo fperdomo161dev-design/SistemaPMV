@@ -145,7 +145,7 @@ class EmpleadosFrame(ttk.Frame):
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
-            # instrucciones boton actualizar
+            # guardar 
     def guardar(self):
 
         try:
@@ -169,7 +169,31 @@ class EmpleadosFrame(ttk.Frame):
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
-            # instrucciones boton eliminar
+    # instrucciones boton actualizar
+
+    def actualizar(self):
+
+        if not self.empleado_seleccionado:
+            messagebox.showwarning("Aviso", "Selecciona un empleado")
+            return
+
+        try:
+            data = {
+                "nombre": self.var_nombre.get(),
+                "cargo": self.var_cargo.get(),
+                "usuario": self.var_usuario.get(),
+                "clave": self.var_clave.get()
+            }
+
+            actualizar_empleado(self.empleado_seleccionado, data)
+
+            self.cargar_empleados()
+            messagebox.showinfo("OK", "Empleado actualizado correctamente")
+
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
+
+# instrucciones boton eliminar
     def eliminar(self):
 
         if not self.empleado_seleccionado:
@@ -188,18 +212,18 @@ class EmpleadosFrame(ttk.Frame):
             # Seleccion
     def seleccionar_empleado(self, event):
 
-             sel = self.tree.selection()
-             if not sel:
+        sel = self.tree.selection()
+        if not sel:
               return
 
-              v = self.tree.item(sel[0])["values"]
+        v = self.tree.item(sel[0])["values"]
 
-              self.empleado_seleccionado = v[0]
+        self.empleado_seleccionado = v[0]
 
-              self.var_cedula.set(v[0])
-              self.var_nombre.set(v[1])
-              self.var_cargo.set(v[2])
-              self.var_usuario.set(v[3])
+        self.var_cedula.set(v[0])
+        self.var_nombre.set(v[1])
+        self.var_cargo.set(v[2])
+        self.var_usuario.set(v[3])
 
     # Cargar empleados
 
