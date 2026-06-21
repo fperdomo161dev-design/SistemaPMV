@@ -145,29 +145,7 @@ class EmpleadosFrame(ttk.Frame):
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
-            # guardar 
-    def guardar(self):
-
-        try:
-            emp = Empleado(
-                cedula=self.var_cedula.get(),
-                nombre=self.var_nombre.get(),
-                cargo=self.var_cargo.get(),
-                usuario=self.var_usuario.get(),
-                clave=self.var_clave.get()
-            )
-
-            ok = crear_empleado(emp)
-
-            if not ok:
-                messagebox.showwarning("Aviso", "La cédula ya existe")
-                return
-
-            self.cargar_empleados()
-            messagebox.showinfo("OK", "Empleado creado correctamente")
-
-        except Exception as e:
-            messagebox.showerror("Error", str(e))
+            
 
     # instrucciones boton actualizar
 
