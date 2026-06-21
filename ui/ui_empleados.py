@@ -200,3 +200,58 @@ class EmpleadosFrame(ttk.Frame):
               self.var_nombre.set(v[1])
               self.var_cargo.set(v[2])
               self.var_usuario.set(v[3])
+
+    # Cargar empleados
+
+    def cargar_empleados(self):
+
+        for i in self.tree.get_children():
+            self.tree.delete(i)
+
+        for e in listar_empleados():
+            self.tree.insert("", "end", values=(
+                e.cedula,
+                e.nombre,
+                e.cargo,
+                e.usuario
+            ))
+
+    # Limpiar formulario
+
+    def limpiar_formulario(self):
+
+        self.var_cedula.set("")
+        self.var_nombre.set("")
+        self.var_cargo.set("")
+        self.var_usuario.set("")
+        self.var_clave.set("")
+        self.empleado_seleccionado = None
+
+    # Buscar
+
+    def buscar(self):
+
+        txt = self.var_buscar.get().strip()
+
+        if not txt:
+            self.cargar_empleados()
+            return
+
+        for i in self.tree.get_children():
+            self.tree.delete(i)
+
+        for e in listar_empleados():
+            if e.cedula == txt:
+                self.tree.insert("", "end", values=(
+                    e.cedula,
+                    e.nombre,
+                    e.cargo,
+                    e.usuario
+                ))
+                break
+
+    # Limpiar búsqueda
+    def limpiar_busqueda(self):
+
+        self.var_buscar.set("")
+        self.cargar_empleados()
