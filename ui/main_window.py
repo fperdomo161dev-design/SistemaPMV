@@ -374,15 +374,7 @@ class MainWindow(tk.Toplevel):
             sticky="nsew"
         )
 
-        frame_empleados = EmpleadosFrame(
-       self.content_container
-    )
-
-        frame_empleados.grid(
-        row=0,
-       column=0,
-      sticky="nsew"
-   )
+       
 
         self.frames_contenido["empleados"] = frame_empleados
     
