@@ -117,24 +117,33 @@ def validar_credenciales(
 # ACTUALIZAR
 
 
+# ACTUALIZAR
+
 def actualizar_empleado(
     cedula: str,
     data: dict
 ) -> bool:
+
+    cedula = str(cedula).strip()
 
     res = coleccion.update_one(
         {"cedula": cedula},
         {"$set": data},
     )
 
-    return res.modified_count > 0
+    return res.matched_count > 0
 
 # ELIMINAR
+
+
 def eliminar_empleado(
     cedula: str
 ) -> bool:
 
+    cedula = str(cedula).strip()
+
     res = coleccion.delete_one(
         {"cedula": cedula}
     )
+
     return res.deleted_count > 0

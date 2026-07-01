@@ -148,7 +148,7 @@ class EmpleadosFrame(ttk.Frame):
             
 
     # instrucciones boton actualizar
-
+   
     def actualizar(self):
 
         if not self.empleado_seleccionado:
@@ -162,6 +162,8 @@ class EmpleadosFrame(ttk.Frame):
                 "usuario": self.var_usuario.get(),
                 "clave": self.var_clave.get()
             }
+
+            
 
             actualizar_empleado(self.empleado_seleccionado, data)
 
@@ -190,18 +192,20 @@ class EmpleadosFrame(ttk.Frame):
             # Seleccion
     def seleccionar_empleado(self, event):
 
-        sel = self.tree.selection()
-        if not sel:
-              return
+      sel = self.tree.selection()
 
-        v = self.tree.item(sel[0])["values"]
+      if not sel:
+        return
 
-        self.empleado_seleccionado = v[0]
+      v = self.tree.item(sel[0])["values"]
 
-        self.var_cedula.set(v[0])
-        self.var_nombre.set(v[1])
-        self.var_cargo.set(v[2])
-        self.var_usuario.set(v[3])
+      self.empleado_seleccionado = str(v[0]).strip()
+
+      self.var_cedula.set(str(v[0]))
+      self.var_nombre.set(v[1])
+      self.var_cargo.set(v[2])
+      self.var_usuario.set(v[3])
+      
 
     # Cargar empleados
 
