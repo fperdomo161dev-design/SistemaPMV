@@ -209,9 +209,9 @@ class LoginWindow(tk.Tk):
             pady=(0, 22)
         )
 
-        # =========================
+       
         # BOTON LOGIN
-        # =========================
+    
 
         btn_login = ttk.Button(
             card,

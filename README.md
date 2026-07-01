@@ -16,7 +16,7 @@ Desarrollar un sistema modular, económico y fácil de implementar que permita:
 - Administrar empleados
 - Implementar autenticación de usuarios
 - Organizar inventario de manera local y eficiente
-- Escalar futuras funcionalidades como facturación y reportes
+- Escalar futuras funcionalidades como clientes, ventas, facturación y reportes.
 
 ---
 # Stack tecnológico 
@@ -33,6 +33,18 @@ Desarrollar un sistema modular, económico y fácil de implementar que permita:
 
 ---
 
+# Características principales
+
+- Interfaz gráfica desarrollada con Tkinter.
+- Base de datos MongoDB.
+- CRUD completo de productos.
+- CRUD completo de empleados.
+- Sistema de autenticación de usuarios.
+- Arquitectura modular por capas.
+- Persistencia local de datos.
+- Control de versiones mediante Git y GitHub.
+
+---
 # Descripción de componentes
 
 El sistema se encuentra organizado mediante una arquitectura modular por capas:
@@ -59,13 +71,21 @@ Centraliza la conexión con MongoDB mediante PyMongo.
 
 ```text
 Usuario
-   ↓
-Interfaz gráfica (UI)
-   ↓
-Servicios (Services)
-   ↓
-Modelos (Models)
-   ↓
+    │
+    ▼
+Inicio de sesión
+    │
+    ▼
+Menú principal
+    │
+ ┌──┴───────────┐
+ ▼              ▼
+Productos   Empleados
+    │
+    ▼
+Services
+    │
+    ▼
 MongoDB
 ```
 
@@ -74,23 +94,35 @@ MongoDB
 ```text
 SistemaPMV/
 │
+├── Assets/
+│
 ├── database/
 │   └── conexion.py
 │
+├── docs/
+│   ├── login.png
+│   ├── login1.png
+│   ├── productos.png
+│   ├── empleados.png
+│   ├── commits_productos.png
+│   └── commits_empleados.png
+│
 ├── models/
-│   ├── producto.py
-│   └── empleado.py
+│   ├── empleado.py
+│   └── producto.py
 │
 ├── services/
-│   ├── producto_service.py
-│   └── empleado_service.py
+│   ├── empleado_service.py
+│   └── producto_service.py
 │
 ├── ui/
+│   ├── login_window.py
+│   ├── main_window.py
+│   ├── ui_empleados.py
+│   └── ui_productos.py
 │
-├── docs/
-│
+├── .gitignore
 ├── app.py
-│
 └── README.md
 ```
 
@@ -98,14 +130,13 @@ SistemaPMV/
 
 # Funcionalidades implementadas
 
-- Conexión funcional a MongoDB
-- Gestión de productos
-- Gestión de empleados
-- Arquitectura modular
-- Interfaz inicial de login
-- Botón de cerrar sesión
-- Persistencia de datos en MongoDB
-- Trabajo colaborativo mediante Git y GitHub
+- Sistema de autenticación mediante inicio de sesión.
+- CRUD completo de productos.
+- CRUD completo de empleados.
+- Persistencia de datos con MongoDB.
+- Arquitectura modular.
+- Interfaz gráfica desarrollada con Tkinter.
+- Trabajo colaborativo mediante Git y GitHub.
 
 ---
 
@@ -309,13 +340,14 @@ git push origin main
 
 # Evidencia funcional
 
-El proyecto cuenta actualmente con:
+El proyecto cuenta actualmente con las siguientes funcionalidades implementadas:
 
-- Conexión funcional a MongoDB
-- Interfaz inicial de login
-- Gestión de productos y empleados
-- Persistencia de datos
-- Botón de cerrar sesión
+- Sistema de autenticación mediante inicio de sesión.
+- CRUD completo de productos.
+- CRUD completo de empleados.
+- Persistencia de datos utilizando MongoDB.
+- Arquitectura modular.
+- Control de versiones mediante Git y GitHub.
 
 ## Capturas del sistema
 
@@ -330,19 +362,40 @@ El proyecto cuenta actualmente con:
 
 ![Login1](docs/login1.png)
 
+
+---
+## Gestión de Productos
+
+El módulo permite:
+
+- Registrar productos.
+- Buscar por referencia.
+- Actualizar productos.
+- Eliminar productos.
+- Visualizar registros en tabla.
+
+![Productos](docs/productos.png)
+---
+## Gestión de Empleados
+
+El módulo permite:
+
+- Registrar empleados.
+- Buscar por cédula.
+- Actualizar empleados.
+- Eliminar empleados.
+- Visualizar registros en tabla.
+
+![Empleados](docs/empleados.png)
+
 ---
 
 
-## Pantalla de inicio del sistema
-
-![Ingreso](docs/ingreso.png)
-
-
----
 ## Trabajo colaborativo
 
-![Ingreso](docs/commit.png)
+![Productos](docs/commits_productos.png)
 
+![Empleados](docs/commits_empleados.png)
 
 ---
 
@@ -367,13 +420,22 @@ El proyecto incluye:
 
 # Estado del proyecto
 
-Proyecto en desarrollo.
+## Funcionalidades completadas
 
-Próximas mejoras:
+- Inicio de sesión.
+- CRUD completo de productos.
+- CRUD completo de empleados.
+- Persistencia de datos con MongoDB.
+- Arquitectura modular.
+- Control de versiones mediante Git y GitHub.
 
-- Sistema de login completo
-- Gestión avanzada de inventario
-- Facturación
-- Reportes
-- Validaciones de usuarios
-- Mejoras de interfaz gráfica
+---
+
+## Próximas funcionalidades
+
+- Gestión de clientes.
+- Registro de ventas.
+- Facturación.
+- Reportes.
+- Dashboard.
+- Control avanzado de inventario.

@@ -238,7 +238,7 @@ class MainWindow(tk.Toplevel):
 
             self.nav_buttons[vista] = btn
 
-        # espacio flexible
+        #  flexible
         tk.Frame(
             sidebar,
             bg=COLOR_SIDEBAR

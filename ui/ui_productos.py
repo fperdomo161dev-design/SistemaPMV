@@ -408,7 +408,7 @@ class ProductosFrame(ttk.Frame):
 
     def limpiar_formulario(self):
 
-     # Limpia todos los campos del formulario
+     # Limpia  campos del formulario
       self.var_ref.set("")
       self.var_marca.set("")
       self.var_talla.set("")
