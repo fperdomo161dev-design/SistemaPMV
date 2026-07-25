@@ -4,6 +4,7 @@ from tkinter import ttk, messagebox
 from services.empleado_service import validar_credenciales
 from ui.main_window import MainWindow
 
+
 COLOR_BG = "#050509"
 COLOR_CARD = "#0b0f19"
 COLOR_TEXT = "#e5e7eb"

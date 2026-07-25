@@ -5,6 +5,8 @@ from dataclasses import asdict
 
 from database.conexion import get_db
 from models.empleado import Empleado
+from services.security_service import verify_password
+from services.security_service import hash_password
 
 db = get_db()
 
@@ -61,6 +63,9 @@ def crear_empleado(
 
     data = asdict(empleado)
 
+    if "clave" in data and data["clave"]:
+        data["clave"] = hash_password(data["clave"])
+
     res = coleccion.insert_one(data)
 
     return bool(res.inserted_id)
@@ -109,12 +114,12 @@ def validar_credenciales(
     if not empleado:
         return None
 
-    if empleado.clave != clave:
+    if not verify_password(clave, empleado.clave):
         return None
 
     return empleado
 
-# ACTUALIZAR
+
 
 
 # ACTUALIZAR
@@ -125,6 +130,9 @@ def actualizar_empleado(
 ) -> bool:
 
     cedula = str(cedula).strip()
+
+    if "clave" in data and data["clave"]:
+        data["clave"] = hash_password(data["clave"])
 
     res = coleccion.update_one(
         {"cedula": cedula},
