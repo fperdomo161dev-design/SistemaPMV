@@ -7,6 +7,9 @@ from database.conexion import get_db
 from models.empleado import Empleado
 from services.security_service import verify_password
 from services.security_service import hash_password
+from services.contabilidad_service import \
+    registrar_nomina_en_contabilidad  # <- Importamos el servicio de contabilidad
+from services.security_service import hash_password, verify_password
 
 db = get_db()
 
