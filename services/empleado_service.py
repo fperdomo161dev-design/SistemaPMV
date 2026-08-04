@@ -15,29 +15,25 @@ coleccion = db["empleados"]
 # CONVERTIR DOCUMENTO A EMPLEADO
 
 def _doc_a_empleado(doc):
-
-    return Empleado(
-
-        cedula=str(
-            doc.get("cedula", "")
-        ),
-
-        nombre=str(
-            doc.get("nombre", "")
-        ),
-
-        cargo=str(
-            doc.get("cargo", "")
-        ),
-
-        usuario=str(
-            doc.get("usuario", "")
-        ),
-
-        clave=str(
-            doc.get("clave", "")
-        ),
-    )
+  return Empleado(
+      cedula=str(doc.get("cedula", "")),
+      nombre=str(doc.get("nombre", "")),
+      apellido=str(doc.get("apellido", "")),
+      cargo=str(doc.get("cargo", "")),
+      correo=str(doc.get("correo", "")),
+      celular=str(doc.get("celular", "")),
+      usuario=str(doc.get("usuario", "")),
+      clave=str(doc.get("clave", "")),
+      tipo_pago=str(doc.get("tipo_pago", "FIJO")),
+      salario=float(doc.get("salario", 0.0)),
+      tarifa_diaria=float(doc.get("tarifa_diaria", 0.0)),
+      sub_transporte=float(doc.get("sub_transporte", 0.0)),
+      pct_salud=float(doc.get("pct_salud", 0.04)),
+      pct_pension=float(doc.get("pct_pension", 0.04)),
+      pct_arl=float(doc.get("pct_arl", 0.0)),
+      pct_parafiscales=float(doc.get("pct_parafiscales", 0.09)),
+      dias_mes=int(doc.get("dias_mes", 30)),
+  )
 
 # LISTAR
 
@@ -50,55 +46,41 @@ def listar_empleados() -> List[Empleado]:
 
     return empleados
 # CREAR
-def crear_empleado(
-    empleado: Empleado
-) -> bool:
+def crear_empleado(empleado_data) -> bool:
+ 
+  if isinstance(empleado_data, Empleado):
+    data = asdict(empleado_data)
+    emp_obj = empleado_data
+  else:
+    data = empleado_data
+    
+    emp_obj = Empleado(**data)
 
-    existe = coleccion.find_one(
-        {"cedula": empleado.cedula}
-    )
+  existe = coleccion.find_one({"cedula": data.get("cedula")})
+  if existe:
+    return False
 
-    if existe:
-        return False
+  if "clave" in data and data["clave"]:
+    data["clave"] = hash_password(data["clave"])
 
-    data = asdict(empleado)
+  res = coleccion.insert_one(data)
+  if res.inserted_id:
+    
+    if emp_obj.salario > 0:
+      registrar_nomina_en_contabilidad(emp_obj, emp_obj.salario)
+    return True
 
-    if "clave" in data and data["clave"]:
-        data["clave"] = hash_password(data["clave"])
-
-    res = coleccion.insert_one(data)
-
-    return bool(res.inserted_id)
+  return False
 
 
 # BUSCAR POR CÉDULA
-def buscar_empleado_por_cedula(
-    cedula: str
-) -> Optional[Empleado]:
+def buscar_empleado_por_cedula(cedula: str) -> Optional[Empleado]:
+  doc = coleccion.find_one({"cedula": cedula})
 
-    doc = coleccion.find_one(
-        {"cedula": cedula}
-    )
+  if not doc:
+    return None
 
-    if not doc:
-        return None
-
-    return _doc_a_empleado(doc)
-
-# BUSCAR POR USUARIO
-
-def buscar_empleado_por_usuario(
-    usuario: str
-) -> Optional[Empleado]:
-
-    doc = coleccion.find_one(
-        {"usuario": usuario}
-    )
-
-    if not doc:
-        return None
-
-    return _doc_a_empleado(doc)
+  return _doc_a_empleado(doc)
 
 # LOGIN
 
@@ -118,6 +100,29 @@ def validar_credenciales(
         return None
 
     return empleado
+
+# BUSCAR POR USUARIO
+
+
+def buscar_empleado_por_usuario(usuario: str) -> Optional[Empleado]:
+  doc = coleccion.find_one({"usuario": usuario})
+
+  if not doc:
+    return None
+
+  return _doc_a_empleado(doc)
+
+#loggin
+def validar_credenciales(usuario: str, clave: str) -> Optional[Empleado]:
+  empleado = buscar_empleado_por_usuario(usuario)
+
+  if not empleado:
+    return None
+
+  if not verify_password(clave, empleado.clave):
+    return None
+
+  return empleado
 
 
 
@@ -144,14 +149,9 @@ def actualizar_empleado(
 # ELIMINAR
 
 
-def eliminar_empleado(
-    cedula: str
-) -> bool:
+def eliminar_empleado(cedula: str) -> bool:
+  cedula = str(cedula).strip()
 
-    cedula = str(cedula).strip()
+  res = coleccion.delete_one({"cedula": cedula})
 
-    res = coleccion.delete_one(
-        {"cedula": cedula}
-    )
-
-    return res.deleted_count > 0
+  return res.deleted_count > 0
