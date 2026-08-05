@@ -475,18 +475,18 @@ class MainWindow(tk.Toplevel):
     # REFRESCAR PRODUCTOS
     
     def refrescar_productos(self):
-        print(">>> ENTRÓ A REFRESCAR PRODUCTOS MAINWINDOW")
+        
 
         frame = self.frames_contenido.get("productos")
 
-        print("ID FRAME MAIN:", id(frame))
+        
 
         if frame:
             try:
                frame.limpiar_busqueda()
                frame.update_idletasks()
 
-               print("REFRESCO FORZADO")
+               
             except Exception as e:
                print("Error refrescando productos:", e)
 
