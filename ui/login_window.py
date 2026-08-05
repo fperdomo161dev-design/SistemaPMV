@@ -51,6 +51,11 @@ class LoginWindow(tk.Tk):
         )
 
         style.configure(
+            "Selah.Bg.TFrame", 
+            background=COLOR_BG
+            )
+
+        style.configure(
             "Selah.Card.TFrame",
             background=COLOR_CARD
         )
@@ -91,6 +96,8 @@ class LoginWindow(tk.Tk):
             background=[("active", COLOR_GOLD)],
             foreground=[("active", "#111827")]
         )
+
+        #interfaz ui
 
     def _build_ui(self):
 

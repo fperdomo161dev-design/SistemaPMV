@@ -46,7 +46,7 @@ def registrar_venta(
           {"$inc": {"stock": -item["cantidad"]}},
       )
 
-    # Crear objeto Factura
+    #  objeto Factura
     factura = Factura(
         numero_factura=num_fac,
         cliente_cedula=getattr(cliente, "cedula", "CONSUMIDOR_FINAL"),
