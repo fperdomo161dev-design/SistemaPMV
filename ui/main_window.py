@@ -1,30 +1,47 @@
+from datetime import datetime
 import tkinter as tk
 from tkinter import ttk
-from datetime import datetime
 
+# --- IMPORTS DE SERVICIOS Y BD ---
+from database.conexion import get_db
 from models.empleado import Empleado
-from ui.ui_productos import ProductosFrame
+from services.factura_pdf_service import FacturaPDFService
+from ui.pos import PosFrame
+from ui.ui_clientes import ClientesFrame
+from ui.ui_contabilidad import ContabilidadFrame
 from ui.ui_empleados import EmpleadosFrame
+from ui.ui_productos import ProductosFrame
 
-# COLORES
 
-COLOR_BG = "#050509"
-COLOR_SIDEBAR = "#020814"
-COLOR_TOPBAR = "#050b16"
-COLOR_CONTENT = "#050509"
-COLOR_CARD = "#0b0f19"
+# COLORES DE LA APLICACIÓN
 
-COLOR_GOLD = "#f5d26b"
-COLOR_TEXT = "#e5e7eb"
+COLOR_BG = "#0A0D14"  # Fondo principal ultramarino muy oscuro
+COLOR_SIDEBAR = "#111625"  # Barra lateral azul noche
+COLOR_TOPBAR = "#111625"  # Barra superior integrada
+COLOR_CONTENT = "#0A0D14"  # Área de contenido
+COLOR_CARD = "#1A2035"  # Tarjetas y paneles
+COLOR_BORDER = "#252D47"  # Líneas divisorias suaves
+
+COLOR_GOLD = "#F59E0B"  # Acento dorado primario
+COLOR_GOLD_HOVER = "#F59E0B"  # Dorado en hover
+COLOR_TEXT = "#F3F4F6"  # Texto principal claro
+COLOR_TEXT_MUTED = "#9CA3AF"  # Texto secundario/gris
+COLOR_SUCCESS = "#10B981"  # Indicador verde activo
 
 
 class MainWindow(tk.Toplevel):
 
-    def __init__(self, master_root: tk.Tk, empleado: Empleado):
-
+    def __init__(
+        self, master_root: tk.Tk, empleado: Empleado, db=None, pdf_service=None
+    ):
         super().__init__(master_root)
 
         self.empleado = empleado
+        # Si no se pasa db o pdf_service desde el login/main, los inicializa por defecto
+        self.db = db if db is not None else get_db()
+        self.pdf_service = (
+            pdf_service if pdf_service is not None else FacturaPDFService()
+        )
 
         self.title("PMV - Sistema Inventario")
 
@@ -46,21 +63,23 @@ class MainWindow(tk.Toplevel):
         self._crear_contenido()
         self._crear_frames()
 
-        self.cambiar_vista("productos")
+        # anuncio de bienvenida antes de cargar cualquier vista
+        self._mostrar_bienvenida()
 
+   
     # GRID PRINCIPAL
-
+   
     def _configurar_grid(self):
-
         self.columnconfigure(0, weight=0)
         self.columnconfigure(1, weight=1)
 
         self.rowconfigure(0, weight=0)
         self.rowconfigure(1, weight=1)
 
-    # ESTILOS
-    def _configurar_estilos(self):
 
+    # ESTILOS TTK
+   
+    def _configurar_estilos(self):
         style = ttk.Style(self)
 
         try:
@@ -69,135 +88,117 @@ class MainWindow(tk.Toplevel):
             pass
 
         # SIDEBAR
-      
-
-        style.configure(
-            "PMV.Sidebar.TFrame",
-            background=COLOR_SIDEBAR
-        )
+        style.configure("PMV.Sidebar.TFrame", background=COLOR_SIDEBAR)
 
         style.configure(
             "PMV.Sidebar.TButton",
             background=COLOR_SIDEBAR,
-            foreground=COLOR_TEXT,
+            foreground=COLOR_TEXT_MUTED,
             font=("Segoe UI", 11),
             padding=(18, 12),
             relief="flat",
             borderwidth=0,
-            anchor="w"
+            anchor="w",
         )
 
         style.map(
             "PMV.Sidebar.TButton",
-            background=[("active", COLOR_GOLD)],
-            foreground=[("active", "#111827")]
+            background=[("active", COLOR_CARD)],
+            foreground=[("active", COLOR_GOLD)],
         )
 
         style.configure(
             "PMV.SidebarSelected.TButton",
             background=COLOR_GOLD,
-            foreground="#111827",
-            font=("Segoe UI", 11, "bold"),
-            padding=(18, 12),
+            foreground="#22201E",
+            font=("Segoe UI", 10, "bold"),
+            padding=(16, 12),
             relief="flat",
             borderwidth=0,
-            anchor="w"
+            anchor="w",
         )
-# TOPBAR
+
         style.configure(
-            "PMV.Topbar.TFrame",
-            background=COLOR_TOPBAR
+            "PMV.Logout.TButton",
+            background=COLOR_SIDEBAR,
+            foreground="#EF4444",
+            font=("Segoe UI", 10, "bold"),
+            padding=(16, 10),
+            relief="flat",
+            anchor="w",
         )
+
+        # TOPBAR
+        style.configure("PMV.Topbar.TFrame", background=COLOR_TOPBAR)
 
         style.configure(
             "PMV.TopbarTitle.TLabel",
             background=COLOR_TOPBAR,
             foreground=COLOR_TEXT,
-            font=("Segoe UI", 13, "bold")
+            font=("Segoe UI", 13, "bold"),
         )
 
         style.configure(
             "PMV.TopbarUser.TLabel",
             background=COLOR_TOPBAR,
             foreground=COLOR_GOLD,
-            font=("Segoe UI", 11, "bold")
+            font=("Segoe UI", 11, "bold"),
         )
 
         style.configure(
             "PMV.Clock.TLabel",
             background=COLOR_TOPBAR,
-            foreground=COLOR_TEXT,
-            font=("Segoe UI", 10)
+            foreground=COLOR_TEXT_MUTED,
+            font=("Segoe UI", 10),
         )
 
         # CONTENT
-        style.configure(
-            "PMV.Content.TFrame",
-            background=COLOR_CONTENT
-        )
+        style.configure("PMV.Content.TFrame", background=COLOR_CONTENT)
+        style.configure("PMV.Card.TFrame", background=COLOR_CARD)
 
-        style.configure(
-            "PMV.Card.TFrame",
-            background=COLOR_CARD
-        )
         # TREEVIEW
-
         style.configure(
             "Treeview",
-            background=COLOR_BG,
+            background=COLOR_CARD,
             foreground=COLOR_TEXT,
-            fieldbackground=COLOR_BG,
+            fieldbackground=COLOR_CARD,
             borderwidth=0,
-            rowheight=30,
-            font=("Segoe UI", 10)
+            rowheight=34,
+            font=("Segoe UI", 10),
         )
 
         style.configure(
             "Treeview.Heading",
-            background=COLOR_TOPBAR,
-            foreground=COLOR_TEXT,
+            background=COLOR_SIDEBAR,
+            foreground=COLOR_GOLD,
             font=("Segoe UI", 10, "bold"),
-            relief="flat"
+            relief="flat",
         )
 
         style.map(
             "Treeview",
             background=[("selected", COLOR_GOLD)],
-            foreground=[("selected", "#111827")]
+            foreground=[("selected", "#0B0F19")],
         )
 
-    # ROLES
+    
+    # VALIDACIÓN DE ROLES
+    
     def _cargo_norm(self):
-
-        return (
-            getattr(self.empleado, "cargo", "")
-            .strip()
-            .lower()
-        )
+        return getattr(self.empleado, "cargo", "").strip().lower()
 
     def _es_admin(self):
+        return self._cargo_norm() in ("admin", "administrador", "gerente")
 
-        return self._cargo_norm() in (
-            "admin",
-            "administrador",
-            "gerente"
-        )
+    def _es_auxiliar(self):
+        return self._cargo_norm() in ("auxiliar", "aux")
 
+    
+    # CREACIÓN DE LA BARRA LATERAL (SIDEBAR)
+    
     def _crear_sidebar(self):
-
-        sidebar = ttk.Frame(
-            self,
-            style="PMV.Sidebar.TFrame",
-            width=240
-        )
-
-        sidebar.grid(
-            row=0,
-            column=0,
-            rowspan=2,
-            sticky="ns"
-        )
-
+        sidebar = ttk.Frame(self, style="PMV.Sidebar.TFrame", width=250)
+        sidebar.grid(row=0, column=0, rowspan=2, sticky="ns")
         sidebar.grid_propagate(False)
 
         # LOGO
@@ -207,182 +208,242 @@ class MainWindow(tk.Toplevel):
             bg=COLOR_SIDEBAR,
             fg=COLOR_GOLD,
             font=("Segoe UI", 20, "bold"),
-            justify="left"
+            justify="left",
+        )
+        lbl_logo.pack(anchor="w", padx=20, pady=(25, 40))
+
+        tk.Frame(sidebar, bg=COLOR_BORDER, height=1).pack(
+            fill="x", padx=15, pady=(0, 15)
         )
 
-        lbl_logo.pack(
-            anchor="w",
-            padx=20,
-            pady=(25, 40)
-        )
-        # BOTONES MENU
-        botones = [
+        # BOTONES DEL MENÚ
+        botones = []
+        if self._es_admin():
+            botones.append(("POS / Ventas", "pos"))
+
+        botones.extend([
             ("Productos", "productos"),
+            ("Clientes", "clientes"),
             ("Empleados", "empleados"),
-        ]
+            ("Contabilidad", "contabilidad"),
+        ])
 
         for texto, vista in botones:
+            if vista == "empleados" and not self._es_admin():
+                continue
+            if vista == "clientes" and self._es_auxiliar():
+                continue
+            if vista in ("pos", "contabilidad") and not self._es_admin():
+                continue
 
             btn = ttk.Button(
                 sidebar,
                 text=texto,
                 style="PMV.Sidebar.TButton",
-                command=lambda v=vista: self.cambiar_vista(v)
+                command=lambda v=vista: self.cambiar_vista(v),
             )
-
-            btn.pack(
-                fill="x",
-                padx=10,
-                pady=4
-            )
-
+            btn.pack(fill="x", padx=10, pady=4)
             self.nav_buttons[vista] = btn
 
-        #  flexible
-        tk.Frame(
+        # Espaciador flexible
+        tk.Frame(sidebar, bg=COLOR_SIDEBAR).pack(expand=True, fill="both")
+
+        # Tarjeta inferior con datos del usuario logueado
+        card_user = tk.Frame(
             sidebar,
-            bg=COLOR_SIDEBAR
-        ).pack(
-            expand=True,
-            fill="both"
+            bg=COLOR_CARD,
+            highlightthickness=1,
+            highlightbackground=COLOR_BORDER,
         )
+        card_user.pack(fill="x", padx=10, pady=(0, 15))
 
-      
-        # CERRAR SESION
-       
+        lbl_status = tk.Label(
+            card_user,
+            text="●",
+            bg=COLOR_CARD,
+            fg=COLOR_SUCCESS,
+            font=("Segoe UI", 12),
+        )
+        lbl_status.pack(side="left", padx=(10, 5), pady=8)
 
+        user_info = tk.Frame(card_user, bg=COLOR_CARD)
+        user_info.pack(side="left", fill="both", expand=True, pady=6)
+
+        tk.Label(
+            user_info,
+            text=self.empleado.nombre,
+            bg=COLOR_CARD,
+            fg=COLOR_TEXT,
+            font=("Segoe UI", 9, "bold"),
+            anchor="w",
+        ).pack(fill="x")
+        tk.Label(
+            user_info,
+            text=self.empleado.cargo.capitalize(),
+            bg=COLOR_CARD,
+            fg=COLOR_GOLD,
+            font=("Segoe UI", 8),
+            anchor="w",
+        ).pack(fill="x")
+
+        # BOTÓN CERRAR SESIÓN
         ttk.Button(
             sidebar,
             text="Cerrar sesión",
-            style="PMV.Sidebar.TButton",
-            command=self._cerrar_sesion
-        ).pack(
-            fill="x",
-            padx=10,
-            pady=(0, 20)
-        )
+            style="PMV.Logout.TButton",
+            command=self._cerrar_sesion,
+        ).pack(fill="x", padx=10, pady=(0, 20))
 
-    # TOPBAR
-
+    
+    # CREACIÓN DE LA BARRA SUPERIOR (TOPBAR)
+   
     def _crear_topbar(self):
-
-        topbar = ttk.Frame(
-            self,
-            style="PMV.Topbar.TFrame",
-            padding=(16, 10)
-        )
-
-        topbar.grid(
-            row=0,
-            column=1,
-            sticky="ew"
-        )
-
+        topbar = ttk.Frame(self, style="PMV.Topbar.TFrame", padding=(16, 10))
+        topbar.grid(row=0, column=1, sticky="ew")
         topbar.columnconfigure(0, weight=1)
 
-        ttk.Label(
+        self.lbl_topbar_title = ttk.Label(
             topbar,
             text="Sistema de Inventario PMV",
-            style="PMV.TopbarTitle.TLabel"
-        ).grid(
-            row=0,
-            column=0,
-            sticky="w"
+            style="PMV.TopbarTitle.TLabel",
         )
+        self.lbl_topbar_title.grid(row=0, column=0, sticky="w")
 
-        frame_right = ttk.Frame(
-            topbar,
-            style="PMV.Topbar.TFrame"
-        )
-
-        frame_right.grid(
-            row=0,
-            column=1,
-            sticky="e"
-        )
-
-        texto_usuario = (
-            f"{self.empleado.nombre} · "
-            f"{self.empleado.cargo}"
-        )
-
-        ttk.Label(
-            frame_right,
-            text=texto_usuario,
-            style="PMV.TopbarUser.TLabel"
-        ).pack(
-            side="left",
-            padx=(0, 15)
-        )
+        frame_right = ttk.Frame(topbar, style="PMV.Topbar.TFrame")
+        frame_right.grid(row=0, column=1, sticky="e")
 
         self.lbl_clock = ttk.Label(
-            frame_right,
-            text="",
-            style="PMV.Clock.TLabel"
+            frame_right, text="", style="PMV.Clock.TLabel"
         )
-
         self.lbl_clock.pack(side="left")
 
         self._actualizar_reloj()
 
-  
-    # CONTENIDO
-
-
-    def _crear_contenido(self):
-
-        self.content_container = ttk.Frame(
-            self,
-            style="PMV.Content.TFrame"
+        tk.Frame(self, bg=COLOR_BORDER, height=1).grid(
+            row=0, column=1, sticky="sew"
         )
 
+    
+    # CONTENEDOR DE CONTENIDO PRINCIPAL
+  
+    def _crear_contenido(self):
+        self.content_container = ttk.Frame(self, style="PMV.Content.TFrame")
         self.content_container.grid(
-            row=1,
-            column=1,
-            sticky="nsew",
-            padx=10,
-            pady=10
+            row=1, column=1, sticky="nsew", padx=10, pady=10
         )
 
         self.content_container.columnconfigure(0, weight=1)
         self.content_container.rowconfigure(0, weight=1)
 
-    # FRAMES
-   
-
+    
+    # INICIALIZACIÓN DE VISTAS (FRAMES)
+    
     def _crear_frames(self):
+        # POS / Ventas (Solo Administradores)
+        if self._es_admin():
+           
+            frame_pos = PosFrame(
+                self.content_container,
+                db=self.db,
+                usuario_actual=self.empleado,
+                pdf_service=self.pdf_service,
+            )
+            frame_pos.grid(row=0, column=0, sticky="nsew")
+            self.frames_contenido["pos"] = frame_pos
 
+        # Productos
         frame_productos = ProductosFrame(
-            self.content_container
+            self.content_container, usuario_actual=self.empleado
         )
-
-        frame_productos.grid(
-            row=0,
-            column=0,
-            sticky="nsew"
-        )
-
+        frame_productos.grid(row=0, column=0, sticky="nsew")
         self.frames_contenido["productos"] = frame_productos
 
-        frame_empleados = EmpleadosFrame(
-            self.content_container
-        )
+        # Clientes (Se crea para todos MENOS el auxiliar)
+        if not self._es_auxiliar():
+            frame_clientes = ClientesFrame(
+                self.content_container, usuario_actual=self.empleado
+            )
+            frame_clientes.grid(row=0, column=0, sticky="nsew")
+            self.frames_contenido["clientes"] = frame_clientes
 
-        frame_empleados.grid(
-            row=0,
-            column=0,
-            sticky="nsew"
-        )
+        # Empleados (Solo Administradores)
+        if self._es_admin():
+            frame_empleados = EmpleadosFrame(
+                self.content_container, usuario_actual=self.empleado
+            )
+            frame_empleados.grid(row=0, column=0, sticky="nsew")
+            self.frames_contenido["empleados"] = frame_empleados
 
-       
+        # Contabilidad (Solo Administradores)
+        if self._es_admin():
+            frame_contabilidad = ContabilidadFrame(
+                self.content_container, usuario_actual=self.empleado
+            )
+            frame_contabilidad.grid(row=0, column=0, sticky="nsew")
+            self.frames_contenido["contabilidad"] = frame_contabilidad
 
-        self.frames_contenido["empleados"] = frame_empleados
     
+    # ANUNCIO DE BIENVENIDA PERSONALIZADO
+   
+    def _mostrar_bienvenida(self):
+        for frame in self.frames_contenido.values():
+            frame.grid_remove()
 
-    # CAMBIAR VISTA
+        frame_bienvenida = tk.Frame(self.content_container, bg=COLOR_CARD)
+        frame_bienvenida.grid(row=0, column=0, sticky="nsew")
+        self.frames_contenido["bienvenida"] = frame_bienvenida
 
+        frame_bienvenida.columnconfigure(0, weight=1)
+        frame_bienvenida.rowconfigure(0, weight=1)
+
+        contenido_centro = tk.Frame(frame_bienvenida, bg=COLOR_CARD)
+        contenido_centro.grid(row=0, column=0)
+
+        tk.Label(
+            contenido_centro,
+            text="¡Bienvenido a su sistema!",
+            bg=COLOR_CARD,
+            fg=COLOR_GOLD,
+            font=("Segoe UI", 26, "bold"),
+        ).pack(pady=(0, 10))
+
+        tk.Label(
+            contenido_centro,
+            text="Tus pies en nuestras manos",
+            bg=COLOR_CARD,
+            fg=COLOR_TEXT,
+            font=("Segoe UI", 16, "italic"),
+        ).pack(pady=(0, 30))
+
+        btn_empezar = tk.Button(
+            contenido_centro,
+            text="Continuar al Sistema",
+            bg=COLOR_GOLD,
+            fg="#111827",
+            font=("Segoe UI", 12, "bold"),
+            bd=0,
+            padx=20,
+            pady=10,
+            command=self._ir_vista_inicial_post_bienvenida,
+        )
+        btn_empezar.pack()
+
+    def _ir_vista_inicial_post_bienvenida(self):
+        if "pos" in self.frames_contenido:
+            self.cambiar_vista("pos")
+        elif "productos" in self.frames_contenido:
+            self.cambiar_vista("productos")
+        elif "clientes" in self.frames_contenido:
+            self.cambiar_vista("clientes")
+        elif "empleados" in self.frames_contenido:
+            self.cambiar_vista("empleados")
+        elif "contabilidad" in self.frames_contenido:
+            self.cambiar_vista("contabilidad")
+
+    
+    # CONTROL DE NAVEGACIÓN ENTRE VISTAS
+   
     def cambiar_vista(self, vista):
-
         if vista not in self.frames_contenido:
             return
 
@@ -390,51 +451,55 @@ class MainWindow(tk.Toplevel):
             frame.grid_remove()
 
         frame = self.frames_contenido[vista]
-
         frame.grid()
 
+        titulos = {
+            "pos": "Punto de Venta y Facturación (POS)",
+            "productos": "Gestión de Productos e Inventario",
+            "clientes": "Gestión de Clientes",
+            "empleados": "Administración de Personal",
+            "contabilidad": "Módulo de Contabilidad General",
+        }
+        if hasattr(self, "lbl_topbar_title"):
+            self.lbl_topbar_title.config(
+                text=titulos.get(vista, "Sistema de Inventario PMV")
+            )
+
         for nombre, btn in self.nav_buttons.items():
-
             if nombre == vista:
-
-                btn.configure(
-                    style="PMV.SidebarSelected.TButton"
-                )
-
+                btn.configure(style="PMV.SidebarSelected.TButton")
             else:
+                btn.configure(style="PMV.Sidebar.TButton")
 
-                btn.configure(
-                    style="PMV.Sidebar.TButton"
-                )
-
+    
     # REFRESCAR PRODUCTOS
-
+    
     def refrescar_productos(self):
+        print(">>> ENTRÓ A REFRESCAR PRODUCTOS MAINWINDOW")
 
         frame = self.frames_contenido.get("productos")
 
-        if frame and hasattr(frame, "cargar_productos"):
+        print("ID FRAME MAIN:", id(frame))
 
+        if frame:
             try:
-                frame.cargar_productos()
+               frame.limpiar_busqueda()
+               frame.update_idletasks()
+
+               print("REFRESCO FORZADO")
             except Exception as e:
-                print("Error refrescando productos:", e)
+               print("Error refrescando productos:", e)
 
-    # CLOCK
-
+    
+    # RELOJ EN TIEMPO REAL
+    
     def _actualizar_reloj(self):
-
-        ahora = datetime.now().strftime(
-            "%d/%m/%Y - %H:%M:%S"
-        )
-
+        ahora = datetime.now().strftime("📅 %d/%m/%Y  •  🕒 %H:%M:%S")
         self.lbl_clock.config(text=ahora)
+        self.after(1000, self._actualizar_reloj)
 
-        self.after(
-            1000,
-            self._actualizar_reloj
-        )   
-    # CERRAR SESION
+    
+    # CERRAR SESIÓN
+    
     def _cerrar_sesion(self):
-
         self.destroy()
