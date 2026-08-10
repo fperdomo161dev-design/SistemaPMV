@@ -590,10 +590,11 @@ Se encuentra implementada la interfaz inicial del módulo, actualmente en proces
 
 ## Trabajo colaborativo
 
-![Productos](docs/commits_productos.png)
+#### Commits de Yova23
+![Commits de Yova23](docs/commits_yova.png)
 
-![Empleados](docs/commits_empleados.png)
-
+#### Commits de fperdomodev
+![Commits de fperdomodev](docs/commits_fredy.png)
 ---
 
 # Recursos adicionales
@@ -615,24 +616,27 @@ El proyecto incluye:
 ---
 
 
-# Estado del proyecto
+## Estado del proyecto
 
-## Funcionalidades completadas
+### Funcionalidades completadas
 
-- Inicio de sesión.
-- CRUD completo de productos.
-- CRUD completo de empleados.
-- Persistencia de datos con MongoDB.
-- Arquitectura modular.
-- Control de versiones mediante Git y GitHub.
+* Inicio de sesión.
+* Gestión completa de productos (CRUD).
+* Gestión completa de empleados (CRUD).
+* Gestión de clientes.
+* Registro y gestión de ventas.
+* Generación de facturas en formato PDF.
+* Consulta y apertura de facturas.
+* Control y actualización automática del inventario.
+* Actualización del stock al realizar ventas.
+* Restitución del stock al anular facturas.
+* Cierre y control de caja.
+* Persistencia de datos mediante MongoDB.
+* Arquitectura modular.
+* Control de versiones mediante Git y GitHub.
 
----
+### Próximas funcionalidades
 
-## Próximas funcionalidades
-
-- Gestión de clientes.
-- Registro de ventas.
-- Facturación.
-- Reportes.
-- Dashboard.
-- Control avanzado de inventario.
+* Generación de reportes de ventas e inventario.
+* Dashboard con indicadores y estadísticas.
+* Mejoras y ampliaciones del sistema de inventario.
