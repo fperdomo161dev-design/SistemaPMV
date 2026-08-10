@@ -545,9 +545,9 @@ Funcionalidades:
 - Recuperación automática de facturas almacenadas.
 - Consulta por número de factura.
 
-![Factura](docs/Factura%201.png)
+![Factura](docs/Factura_1.png)
 
-![Factura](docs/Factura%202.png)
+![Factura](docs/Factura_2.png)
 
 ---
 
