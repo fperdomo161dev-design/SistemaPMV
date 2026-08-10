@@ -460,7 +460,7 @@ Las siguientes imágenes evidencian las principales funcionalidades implementada
 
 El sistema cuenta con un mecanismo de autenticación que valida las credenciales de acceso de los usuarios registrados. Las contraseñas son almacenadas de forma segura mediante hash SHA-256.
 
-![Login](docs/Login.png)
+![Login](docs/login.png)
 
 ---
 
@@ -484,7 +484,7 @@ Funcionalidades:
 - Eliminar productos.
 - Consultar inventario en tiempo real.
 
-![Productos](docs/Productos.png)
+![Productos](docs/productos.png)
 
 ---
 
@@ -500,7 +500,7 @@ Funcionalidades:
 - Eliminar registros.
 - Consultar listado de empleados.
 
-![Empleados](docs/Empleados.png)
+![Empleados](docs/empleados.png)
 
 ---
 
@@ -591,10 +591,10 @@ Se encuentra implementada la interfaz inicial del módulo, actualmente en proces
 ## Trabajo colaborativo
 
 #### Commits de Yova23
-![Commits de Yova23](docs/commits_yova.png)
+![Commits de Yova23](docs/commits 1.png)
 
 #### Commits de fperdomodev
-![Commits de fperdomodev](docs/commits_fredy.png)
+![Commits de fperdomodev](docs/commits 2.png)
 ---
 
 # Recursos adicionales
