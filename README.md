@@ -591,10 +591,10 @@ Se encuentra implementada la interfaz inicial del módulo, actualmente en proces
 ## Trabajo colaborativo
 
 #### Commits de Yova23
-![Commits de Yova23](docs/commits 1.png)
+![Commits de Yova23](docs/commits_1.png)
 
 #### Commits de fperdomodev
-![Commits de fperdomodev](docs/commits 2.png)
+![Commits de fperdomodev](docs/commits_2.png)
 ---
 
 # Recursos adicionales
