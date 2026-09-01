@@ -194,7 +194,7 @@ class MainWindow(tk.Toplevel):
 
     
     # CREACIÓN DE LA BARRA LATERAL (SIDEBAR)
-  
+ 
     def _crear_sidebar(self):
         sidebar = ttk.Frame(self, style="PMV.Sidebar.TFrame", width=250)
         sidebar.grid(row=0, column=0, rowspan=2, sticky="ns")
@@ -269,7 +269,7 @@ class MainWindow(tk.Toplevel):
                 bd=1,
                 relief="flat",
                 cursor="hand2",
-                command=lambda: self.mostrar_frame("configuracion")
+                command=lambda: self.cambiar_vista("configuracion")
             )
             btn_config.pack(fill="x", padx=10, pady=(0, 10))
 
@@ -321,7 +321,7 @@ class MainWindow(tk.Toplevel):
 
     
     # CREACIÓN DE LA BARRA SUPERIOR (TOPBAR)
-  
+ 
     def _crear_topbar(self):
         topbar = ttk.Frame(self, style="PMV.Topbar.TFrame", padding=(16, 10))
         topbar.grid(row=0, column=1, sticky="ew")
@@ -350,7 +350,7 @@ class MainWindow(tk.Toplevel):
 
    
     # CONTENEDOR DE CONTENIDO PRINCIPAL
-  
+ 
     def _crear_contenido(self):
         self.content_container = ttk.Frame(self, style="PMV.Content.TFrame")
         self.content_container.grid(
@@ -360,7 +360,7 @@ class MainWindow(tk.Toplevel):
         self.content_container.columnconfigure(0, weight=1)
         self.content_container.rowconfigure(0, weight=1)
 
-  
+ 
    # INICIALIZACIÓN DE VISTAS (FRAMES)
     
     def _crear_frames(self):
@@ -416,7 +416,7 @@ class MainWindow(tk.Toplevel):
 
     
     # ANUNCIO DE BIENVENIDA PERSONALIZADO
-  
+ 
     def _mostrar_bienvenida(self):
         for frame in self.frames_contenido.values():
             frame.grid_remove()
@@ -491,6 +491,7 @@ class MainWindow(tk.Toplevel):
             "clientes": "Gestión de Clientes",
             "empleados": "Administración de Personal",
             "contabilidad": "Módulo de Contabilidad General",
+            "configuracion": "Configuración General del Sistema",
         }
         if hasattr(self, "lbl_topbar_title"):
             self.lbl_topbar_title.config(
@@ -503,9 +504,9 @@ class MainWindow(tk.Toplevel):
             else:
                 btn.configure(style="PMV.Sidebar.TButton")
 
-  
+ 
     # REFRESCAR PRODUCTOS
-  
+ 
     def refrescar_productos(self):
         print(">>> ENTRÓ A REFRESCAR PRODUCTOS MAINWINDOW")
 
