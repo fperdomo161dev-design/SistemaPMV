@@ -27,12 +27,12 @@ class PanelProductos:
         self.pos.combo_categoria.current(0)
 
     def _on_busqueda_change(self, event=None):
-        #Callback al escribir en la caja de búsqueda del catálogo
+       
         self.pos.pagina_actual = 1
         self.filtrar_productos()
 
     def _on_filtro_change(self, event=None):
-        #Callback al seleccionar una categoría del ComboBox
+        # seleccionar una categoría del ComboBox
         self.pos.pagina_actual = 1
         self.filtrar_productos()
 
@@ -43,7 +43,7 @@ class PanelProductos:
             self._on_filtro_change()
 
     def filtrar_productos(self):
-        #Aplica los filtros locales de texto y categoría sobre la caché de productos
+      
         texto_busqueda = self.pos.entry_buscar_cat.get().strip().lower()
         categoria_sel = self.pos.combo_categoria.get()
 
@@ -69,8 +69,7 @@ class PanelProductos:
     #  RENDERIZADO Y PAGINACIÓN DEL GRID
    
     def _actualizar_grid(self, productos):
-        #Limpia la cuadrícula actual y renderiza la página correspondiente
-        
+       
         for child in self.pos.frame_cards.winfo_children():
             child.destroy()
 
@@ -153,7 +152,7 @@ class PanelProductos:
         )
         lbl_precio.pack(fill="x", padx=5, pady=(2, 5))
 
-        # Evento Clic en la tarjeta -> Agregar directamente al carrito
+        #  Agregar directamente al carrito
         card.bind("<Button-1>", lambda e, p=prod: self._on_card_click(p))
         for child in card.winfo_children():
             child.bind("<Button-1>", lambda e, p=prod: self._on_card_click(p))
