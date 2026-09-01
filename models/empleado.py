@@ -18,4 +18,4 @@ class Empleado:
     pct_pension: float = 0.04
     pct_arl: float = 0.0
     pct_parafiscales: float = 0.09
-    dias_mes: int = 30                             #edit
+    dias_mes: int = 30                           

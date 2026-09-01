@@ -8,4 +8,4 @@ class Cliente:
     correo: str
     celular: str
     direccion: str = ""  
-    puntos: int = 0     
+    puntos: int = 0      
