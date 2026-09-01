@@ -1,32 +1,31 @@
 from datetime import datetime
 import tkinter as tk
 from tkinter import ttk
-
-# --- IMPORTS DE SERVICIOS Y BD ---
 from database.conexion import get_db
 from models.empleado import Empleado
 from services.factura_pdf_service import FacturaPDFService
+from ui.contabilidad.ui_contabilidad import ContabilidadFrame
 from ui.pos import PosFrame
 from ui.ui_clientes import ClientesFrame
-from ui.ui_contabilidad import ContabilidadFrame
+from ui.ui_configuracion import ConfiguracionFrame, ModalConfiguracion 
 from ui.ui_empleados import EmpleadosFrame
 from ui.ui_productos import ProductosFrame
 
 
 # COLORES DE LA APLICACIÓN
 
-COLOR_BG = "#0A0D14"  # Fondo principal ultramarino muy oscuro
-COLOR_SIDEBAR = "#111625"  # Barra lateral azul noche
-COLOR_TOPBAR = "#111625"  # Barra superior integrada
-COLOR_CONTENT = "#0A0D14"  # Área de contenido
-COLOR_CARD = "#1A2035"  # Tarjetas y paneles
-COLOR_BORDER = "#252D47"  # Líneas divisorias suaves
+COLOR_BG = "#0A0D14"  
+COLOR_SIDEBAR = "#111625"  
+COLOR_TOPBAR = "#111625"  
+COLOR_CONTENT = "#0A0D14"  
+COLOR_CARD = "#1A2035"  
+COLOR_BORDER = "#252D47" 
 
-COLOR_GOLD = "#F59E0B"  # Acento dorado primario
-COLOR_GOLD_HOVER = "#F59E0B"  # Dorado en hover
-COLOR_TEXT = "#F3F4F6"  # Texto principal claro
-COLOR_TEXT_MUTED = "#9CA3AF"  # Texto secundario/gris
-COLOR_SUCCESS = "#10B981"  # Indicador verde activo
+COLOR_GOLD = "#F59E0B"  
+COLOR_GOLD_HOVER = "#F59E0B"  
+COLOR_TEXT = "#F3F4F6" 
+COLOR_TEXT_MUTED = "#9CA3AF"  
+COLOR_SUCCESS = "#10B981"  
 
 
 class MainWindow(tk.Toplevel):
@@ -37,7 +36,7 @@ class MainWindow(tk.Toplevel):
         super().__init__(master_root)
 
         self.empleado = empleado
-        # Si no se pasa db o pdf_service desde el login/main, los inicializa por defecto
+      
         self.db = db if db is not None else get_db()
         self.pdf_service = (
             pdf_service if pdf_service is not None else FacturaPDFService()
@@ -63,7 +62,7 @@ class MainWindow(tk.Toplevel):
         self._crear_contenido()
         self._crear_frames()
 
-        # anuncio de bienvenida antes de cargar cualquier vista
+      
         self._mostrar_bienvenida()
 
    
@@ -76,7 +75,7 @@ class MainWindow(tk.Toplevel):
         self.rowconfigure(0, weight=0)
         self.rowconfigure(1, weight=1)
 
-
+    
     # ESTILOS TTK
    
     def _configurar_estilos(self):
@@ -183,7 +182,7 @@ class MainWindow(tk.Toplevel):
 
     
     # VALIDACIÓN DE ROLES
-    
+   
     def _cargo_norm(self):
         return getattr(self.empleado, "cargo", "").strip().lower()
 
@@ -195,22 +194,31 @@ class MainWindow(tk.Toplevel):
 
     
     # CREACIÓN DE LA BARRA LATERAL (SIDEBAR)
-    
+  
     def _crear_sidebar(self):
         sidebar = ttk.Frame(self, style="PMV.Sidebar.TFrame", width=250)
         sidebar.grid(row=0, column=0, rowspan=2, sticky="ns")
         sidebar.grid_propagate(False)
 
-        # LOGO
-        lbl_logo = tk.Label(
+        # Cargar nombre comercial desde MongoDB
+        config_empresa = self.db["config_sistema"].find_one({"tipo": "datos_empresa"})
+        nombre_empresa = (
+            config_empresa.get("nombre", "PMV Inventario")
+            if config_empresa
+            else "PMV Inventario"
+        )
+
+        # LOGO / NOMBRE COMERCIAL DINÁMICO
+        self.lbl_logo = tk.Label(
             sidebar,
-            text="PMV\nInventario",
+            text=nombre_empresa,
             bg=COLOR_SIDEBAR,
             fg=COLOR_GOLD,
-            font=("Segoe UI", 20, "bold"),
+            font=("Segoe UI", 16, "bold"),
             justify="left",
+            wraplength=210,
         )
-        lbl_logo.pack(anchor="w", padx=20, pady=(25, 40))
+        self.lbl_logo.pack(anchor="w", padx=20, pady=(25, 30))
 
         tk.Frame(sidebar, bg=COLOR_BORDER, height=1).pack(
             fill="x", padx=15, pady=(0, 15)
@@ -247,6 +255,23 @@ class MainWindow(tk.Toplevel):
 
         # Espaciador flexible
         tk.Frame(sidebar, bg=COLOR_SIDEBAR).pack(expand=True, fill="both")
+
+        # BOTÓN CONFIGURACIÓN (Solo Administradores)
+        if self._es_admin():
+            btn_config = tk.Button(
+                sidebar,
+                text="⚙️ Configuración",
+                bg=COLOR_CARD,
+                fg=COLOR_GOLD,
+                activebackground=COLOR_BORDER,
+                activeforeground=COLOR_GOLD,
+                font=("Segoe UI", 10, "bold"),
+                bd=1,
+                relief="flat",
+                cursor="hand2",
+                command=lambda: ModalConfiguracion(self),
+            )
+            btn_config.pack(fill="x", padx=10, pady=(0, 10))
 
         # Tarjeta inferior con datos del usuario logueado
         card_user = tk.Frame(
@@ -296,7 +321,7 @@ class MainWindow(tk.Toplevel):
 
     
     # CREACIÓN DE LA BARRA SUPERIOR (TOPBAR)
-   
+  
     def _crear_topbar(self):
         topbar = ttk.Frame(self, style="PMV.Topbar.TFrame", padding=(16, 10))
         topbar.grid(row=0, column=1, sticky="ew")
@@ -304,7 +329,7 @@ class MainWindow(tk.Toplevel):
 
         self.lbl_topbar_title = ttk.Label(
             topbar,
-            text="Sistema de Inventario PMV",
+            text="Sistema de Inventario ",
             style="PMV.TopbarTitle.TLabel",
         )
         self.lbl_topbar_title.grid(row=0, column=0, sticky="w")
@@ -323,7 +348,7 @@ class MainWindow(tk.Toplevel):
             row=0, column=1, sticky="sew"
         )
 
-    
+   
     # CONTENEDOR DE CONTENIDO PRINCIPAL
   
     def _crear_contenido(self):
@@ -335,13 +360,12 @@ class MainWindow(tk.Toplevel):
         self.content_container.columnconfigure(0, weight=1)
         self.content_container.rowconfigure(0, weight=1)
 
-    
-    # INICIALIZACIÓN DE VISTAS (FRAMES)
+  
+   # INICIALIZACIÓN DE VISTAS (FRAMES)
     
     def _crear_frames(self):
-        # POS / Ventas (Solo Administradores)
-        if self._es_admin():
-           
+        # POS / Ventas (Visible para Administradores y Vendedores, oculto para Auxiliares)
+        if not self._es_auxiliar():
             frame_pos = PosFrame(
                 self.content_container,
                 db=self.db,
@@ -382,9 +406,17 @@ class MainWindow(tk.Toplevel):
             frame_contabilidad.grid(row=0, column=0, sticky="nsew")
             self.frames_contenido["contabilidad"] = frame_contabilidad
 
+        # Configuración del Sistema y Facturas (Solo Administradores)
+        if self._es_admin():
+            frame_config = ConfiguracionFrame(
+                self.content_container, usuario_actual=self.empleado
+            )
+            frame_config.grid(row=0, column=0, sticky="nsew")
+            self.frames_contenido["configuracion"] = frame_config
+
     
     # ANUNCIO DE BIENVENIDA PERSONALIZADO
-   
+  
     def _mostrar_bienvenida(self):
         for frame in self.frames_contenido.values():
             frame.grid_remove()
@@ -442,7 +474,7 @@ class MainWindow(tk.Toplevel):
 
     
     # CONTROL DE NAVEGACIÓN ENTRE VISTAS
-   
+    
     def cambiar_vista(self, vista):
         if vista not in self.frames_contenido:
             return
@@ -471,28 +503,28 @@ class MainWindow(tk.Toplevel):
             else:
                 btn.configure(style="PMV.Sidebar.TButton")
 
-    
+  
     # REFRESCAR PRODUCTOS
-    
+  
     def refrescar_productos(self):
-        
+        print(">>> ENTRÓ A REFRESCAR PRODUCTOS MAINWINDOW")
 
         frame = self.frames_contenido.get("productos")
 
-        
+        print("ID FRAME MAIN:", id(frame))
 
         if frame:
             try:
-               frame.limpiar_busqueda()
-               frame.update_idletasks()
+                frame.limpiar_busqueda()
+                frame.update_idletasks()
 
-               
+                print("REFRESCO FORZADO")
             except Exception as e:
-               print("Error refrescando productos:", e)
+                print("Error refrescando productos:", e)
 
-    
+   
     # RELOJ EN TIEMPO REAL
-    
+ 
     def _actualizar_reloj(self):
         ahora = datetime.now().strftime("📅 %d/%m/%Y  •  🕒 %H:%M:%S")
         self.lbl_clock.config(text=ahora)
