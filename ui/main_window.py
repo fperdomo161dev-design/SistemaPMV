@@ -7,7 +7,7 @@ from services.factura_pdf_service import FacturaPDFService
 from ui.contabilidad.ui_contabilidad import ContabilidadFrame
 from ui.pos import PosFrame
 from ui.ui_clientes import ClientesFrame
-from ui.ui_configuracion import ConfiguracionFrame, ModalConfiguracion 
+from ui.ui_configuracion import ConfiguracionFrame
 from ui.ui_empleados import EmpleadosFrame
 from ui.ui_productos import ProductosFrame
 
@@ -269,7 +269,7 @@ class MainWindow(tk.Toplevel):
                 bd=1,
                 relief="flat",
                 cursor="hand2",
-                command=lambda: ModalConfiguracion(self),
+                command=lambda: self.mostrar_frame("configuracion")
             )
             btn_config.pack(fill="x", padx=10, pady=(0, 10))
 
