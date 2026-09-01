@@ -18,7 +18,7 @@ def _doc_a_cliente(doc):
         correo=str(doc.get("correo", "")),
         celular=str(doc.get("celular", "")),
         direccion=str(doc.get("direccion", "")),
-        puntos=int(doc.get("puntos", 0))  # <-- CONVERTIR PUNTOS
+        puntos=int(doc.get("puntos", 0))  
     )
 
 def acumular_puntos_por_compra(cedula: str, total_compra: float) -> bool:
@@ -26,7 +26,7 @@ def acumular_puntos_por_compra(cedula: str, total_compra: float) -> bool:
     Calcula 10 puntos por cada 50,000 en compras y los suma al cliente.
     Ejemplo: 100,000 = 20 puntos.
     """
-  #bloque puntos 
+    # Calculamos cuántas veces se cumple el bloque de 50,000
     bloques_de_cincuenta_mil = int(total_compra // 50000)
     puntos_ganados = bloques_de_cincuenta_mil * 10
 

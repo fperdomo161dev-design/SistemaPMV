@@ -1,12 +1,10 @@
 # services/empleado_service.py
 
-from typing import List, Optional
 from dataclasses import asdict
+from typing import List, Optional
 
 from database.conexion import get_db
 from models.empleado import Empleado
-from services.security_service import verify_password
-from services.security_service import hash_password
 from services.contabilidad_service import \
     registrar_nomina_en_contabilidad  # <- Importamos el servicio de contabilidad
 from services.security_service import hash_password, verify_password
@@ -16,6 +14,7 @@ db = get_db()
 coleccion = db["empleados"]
 
 # CONVERTIR DOCUMENTO A EMPLEADO
+
 
 def _doc_a_empleado(doc):
   return Empleado(
@@ -38,25 +37,27 @@ def _doc_a_empleado(doc):
       dias_mes=int(doc.get("dias_mes", 30)),
   )
 
+
 # LISTAR
 
-def listar_empleados() -> List[Empleado]:
-    empleados = []
-    for doc in coleccion.find().sort("nombre", 1):
-        empleados.append(
-            _doc_a_empleado(doc)
-        )
 
-    return empleados
+def listar_empleados() -> List[Empleado]:
+  empleados = []
+  for doc in coleccion.find().sort("nombre", 1):
+    empleados.append(_doc_a_empleado(doc))
+
+  return empleados
+
+
 # CREAR
 def crear_empleado(empleado_data) -> bool:
- 
+  # Acepta tanto un objeto Empleado como un diccionario directo
   if isinstance(empleado_data, Empleado):
     data = asdict(empleado_data)
     emp_obj = empleado_data
   else:
     data = empleado_data
-    
+    # Reconstruimos temporalmente el objeto para usarlo en contabilidad
     emp_obj = Empleado(**data)
 
   existe = coleccion.find_one({"cedula": data.get("cedula")})
@@ -68,7 +69,7 @@ def crear_empleado(empleado_data) -> bool:
 
   res = coleccion.insert_one(data)
   if res.inserted_id:
-    
+    # Registro automático del egreso en contabilidad si tiene un salario asignado
     if emp_obj.salario > 0:
       registrar_nomina_en_contabilidad(emp_obj, emp_obj.salario)
     return True
@@ -85,24 +86,6 @@ def buscar_empleado_por_cedula(cedula: str) -> Optional[Empleado]:
 
   return _doc_a_empleado(doc)
 
-# LOGIN
-
-def validar_credenciales(
-    usuario: str,
-    clave: str
-) -> Optional[Empleado]:
-
-    empleado = buscar_empleado_por_usuario(
-        usuario
-    )
-
-    if not empleado:
-        return None
-
-    if not verify_password(clave, empleado.clave):
-        return None
-
-    return empleado
 
 # BUSCAR POR USUARIO
 
@@ -115,7 +98,10 @@ def buscar_empleado_por_usuario(usuario: str) -> Optional[Empleado]:
 
   return _doc_a_empleado(doc)
 
-#loggin
+
+# LOGIN
+
+
 def validar_credenciales(usuario: str, clave: str) -> Optional[Empleado]:
   empleado = buscar_empleado_por_usuario(usuario)
 
@@ -128,26 +114,22 @@ def validar_credenciales(usuario: str, clave: str) -> Optional[Empleado]:
   return empleado
 
 
-
-
 # ACTUALIZAR
 
-def actualizar_empleado(
-    cedula: str,
-    data: dict
-) -> bool:
 
-    cedula = str(cedula).strip()
+def actualizar_empleado(cedula: str, data: dict) -> bool:
+  cedula = str(cedula).strip()
 
-    if "clave" in data and data["clave"]:
-        data["clave"] = hash_password(data["clave"])
+  if "clave" in data and data["clave"]:
+    data["clave"] = hash_password(data["clave"])
 
-    res = coleccion.update_one(
-        {"cedula": cedula},
-        {"$set": data},
-    )
+  res = coleccion.update_one(
+      {"cedula": cedula},
+      {"$set": data},
+  )
 
-    return res.matched_count > 0
+  return res.matched_count > 0
+
 
 # ELIMINAR
 
