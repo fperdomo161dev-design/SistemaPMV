@@ -493,11 +493,11 @@ Módulo utilizado para configurar los datos del negocio, factura PDF, clave de a
 
 El proyecto fue desarrollado mediante trabajo colaborativo utilizando **Git y GitHub**, permitiendo llevar un registro de los cambios realizados por cada integrante del equipo.
 
-## Historial de Commits de Yovanna Rodríguez
+## Historial de Commits 
 
 ![Commits de Yovanna Rodríguez](docs/colaborativo1.png)
 
-## Historial de Commits de Fredy Perdomo
+
 
 ![Commits de Fredy Perdomo](docs/colaborativo2.png)
 
