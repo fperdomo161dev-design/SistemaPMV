@@ -4,19 +4,21 @@ from tkinter import messagebox, ttk
 from bson import ObjectId
 from services.factura_pdf_service import FacturaPDFService
 from services.cierre_caja_service import generar_cierre
-
+from services.email_service import EmailService  
+from services.producto_service import (
+    buscar_producto_por_ref,
+    listar_productos,
+)
 
 class PanelCarrito:
     def __init__(self, pos):
         self.pos = pos
 
-    
-
-    # =========================================================================
+   
     # AUXILIAR DE BÚSQUEDA Y CONSECUTIVO DE FACTURA
-    # =========================================================================
+    
     def _buscar_factura_en_db(self, identificador):
-        #Busca por numero_factura o ObjectId de forma segura
+        # Busca por numero_factura o ObjectId de forma segura
         if getattr(self.pos, "db", None) is None:
             from database.conexion import get_db
 
@@ -68,7 +70,7 @@ class PanelCarrito:
             return "FAC-000001"
 
     def _obtener_boton_procesar(self):
-        #Busca y retorna la referencia al botón principal de venta/procesar
+      
         posibles_nombres = [
             "btn_procesar_venta",
             "btn_procesar",
@@ -80,7 +82,7 @@ class PanelCarrito:
             if hasattr(self.pos, attr):
                 return getattr(self.pos, attr)
 
-        # Buscar recursivamente en los widgets descendientes
+       
         try:
             for widget in self.pos.winfo_children():
                 if isinstance(widget, tk.Button):
@@ -94,7 +96,7 @@ class PanelCarrito:
             pass
         return None
 
-    
+   
     # BÚSQUEDA Y GESTIÓN DE CLIENTES
     
     def buscar_cliente_por_cedula(self, event=None):
@@ -122,7 +124,7 @@ class PanelCarrito:
             print(f"Error al buscar cliente: {e}")
 
     
-    # BÚSQUEDA Y FILTRADO DE PRODUCTOS
+    # BÚSQUEDA Y FILTRADO DE PRODUCTOS (SOLO POR REFERENCIA)
    
     def filtrar_productos_buscador(self, event=None):
         query = self.pos.entry_buscar_prod.get().strip().lower()
@@ -132,15 +134,22 @@ class PanelCarrito:
             self.pos.listbox_sugerencias.place_forget()
             return
 
+        # 1. Traemos los productos actualizados desde la BD 
+        try:
+            prods = listar_productos()
+            # Si listar_productos() retorna objetos Producto
+            self.pos.productos_cache = [p.__dict__ if hasattr(p, "__dict__") else p for p in prods]
+        except Exception:
+            pass
+
         productos_cache = getattr(self.pos, "productos_cache", []) or []
         coincidencias = []
+
+        # 2. Búsqueda EXCLUSIVA por número de referencia
         for p in productos_cache:
             num_ref = str(p.get("numReferencia", p.get("codigo", ""))).lower()
-            nombre = str(
-                p.get("nombre", f"{p.get('marca', '')} {p.get('color', '')}")
-            ).lower()
 
-            if query in num_ref or query in nombre:
+            if query in num_ref:
                 coincidencias.append(p)
 
         if coincidencias:
@@ -190,17 +199,21 @@ class PanelCarrito:
         except ValueError:
             cantidad = 1
 
-        productos_cache = getattr(self.pos, "productos_cache", []) or []
+        
         prod_encontrado = None
-        for p in productos_cache:
-            num_ref = str(p.get("numReferencia", p.get("codigo", "")))
-            nombre = str(
-                p.get("nombre", f"{p.get('marca', '')} {p.get('color', '')}")
-            ).lower()
-
-            if num_ref.lower() == query.lower() or nombre == query.lower():
-                prod_encontrado = p
-                break
+        
+       
+        prod_db = buscar_producto_por_ref(query)
+        if prod_db:
+            prod_encontrado = prod_db.__dict__ if hasattr(prod_db, "__dict__") else prod_db
+        else:
+      
+            productos_cache = getattr(self.pos, "productos_cache", []) or []
+            for p in productos_cache:
+                num_ref = str(p.get("numReferencia", p.get("codigo", "")))
+                if num_ref.lower() == query.lower():
+                    prod_encontrado = p
+                    break
 
         if prod_encontrado:
             self.agregar_producto(prod_encontrado, cantidad)
@@ -208,7 +221,7 @@ class PanelCarrito:
         else:
             messagebox.showwarning(
                 "Producto no encontrado",
-                f"No se encontró un producto con el código o nombre: '{query}'",
+                f"No se encontró un producto con la referencia: '{query}'",
             )
 
     def limpiar_buscador_carrito(self):
@@ -216,10 +229,9 @@ class PanelCarrito:
         self.pos.entry_cant_prod.delete(0, tk.END)
         self.pos.entry_cant_prod.insert(0, "1")
         self.pos.listbox_sugerencias.place_forget()
-
-    
+   
     # OPERACIONES DEL CARRITO Y PROCESAMIENTO DE PAGO / ACTUALIZACIÓN
-    
+   
     def agregar_producto(self, producto, cantidad=1):
         prod_id = str(producto.get("_id", ""))
         try:
@@ -229,13 +241,12 @@ class PanelCarrito:
         except (ValueError, TypeError):
             precio = 0.0
 
-        nombre = producto.get("nombre")
-        if not nombre:
-            marca = producto.get("marca", "")
-            talla = producto.get("talla", "")
-            color = producto.get("color", "")
-            nombre = f"{marca} {color} Talla {talla}".strip() or "Producto"
+       
+        marca = producto.get("marca", producto.get("nombre", "Sin marca"))
+        color = producto.get("color", "N/A")
+        talla = str(producto.get("talla", "N/A"))
 
+        # Si ya existe en el carrito, se actualiza la cantidad y subtotal
         for item in self.pos.carrito:
             if str(item.get("_id", "")) == prod_id:
                 item["cantidad"] += cantidad
@@ -243,13 +254,16 @@ class PanelCarrito:
                 self.actualizar_tabla_carrito()
                 return
 
+        # Guardar en el carrito con los atributos desglosados
         self.pos.carrito.append(
             {
                 "_id": prod_id,
                 "codigo": producto.get(
                     "numReferencia", producto.get("codigo", "")
                 ),
-                "nombre": nombre,
+                "marca": marca,
+                "color": color,
+                "talla": talla,
                 "precio": precio,
                 "cantidad": cantidad,
                 "subtotal": cantidad * precio,
@@ -274,11 +288,14 @@ class PanelCarrito:
             total_items += 1
             total_unidades += item["cantidad"]
 
+           
             self.pos.tree_cart.insert(
                 "",
                 tk.END,
                 values=(
-                    item["nombre"],
+                    item["marca"],
+                    item["color"],
+                    item["talla"],
                     item["cantidad"],
                     f"$ {item['precio']:,.2f}",
                     f"$ {subtotal:,.2f}",
@@ -289,9 +306,8 @@ class PanelCarrito:
             text=f"🛍️ Ítems en orden: {total_items} (Unidades: {total_unidades})"
         )
         self.pos.lbl_total_pagar.config(text=f"TOTAL: $ {total:,.2f}")
-
     def procesar_pago(self):
-        #Procesa la venta o guarda los cambios si se está editando una factura existente
+        # 1 Validar que el carrito no esté vacío
         if not hasattr(self.pos, "carrito") or not self.pos.carrito:
             messagebox.showwarning(
                 "Carrito Vacío",
@@ -300,6 +316,25 @@ class PanelCarrito:
             )
             return
 
+        # 2Validar datos obligatorios del cliente
+        cedula_cli = self.pos.entry_cli_cedula.get().strip()
+        nombre_cli = self.pos.entry_cli_nombre.get().strip()
+        correo_cli = self.pos.entry_cli_correo.get().strip()
+
+        if not cedula_cli or not nombre_cli:
+            messagebox.showwarning(
+                "Datos Incompletos",
+                "⚠️ Es obligatorio ingresar la Cédula y el Nombre del cliente para emitir la factura.",
+                parent=self.pos,
+            )
+            return
+
+        cliente_info = {
+            "cedula": cedula_cli,
+            "nombre": nombre_cli,
+            "correo": correo_cli,
+        }
+
         try:
             if getattr(self.pos, "db", None) is None:
                 from database.conexion import get_db
@@ -307,13 +342,8 @@ class PanelCarrito:
                 self.pos.db = get_db()
 
             total_venta = sum(item.get("subtotal", 0.0) for item in self.pos.carrito)
-            cliente_info = {
-                "cedula": self.pos.entry_cli_cedula.get().strip() or "C.F.",
-                "nombre": self.pos.entry_cli_nombre.get().strip() or "CLIENTE GENERAL",
-                "correo": self.pos.entry_cli_correo.get().strip(),
-            }
 
-            # SI ESTAMOS EN MODO EDICIÓN
+           
             if getattr(self.pos, "factura_actual_id", None):
                 num_fac = self.pos.factura_actual_id
                 datos_actualizar = {
@@ -343,7 +373,7 @@ class PanelCarrito:
                     f"✅ La factura {num_fac} ha sido actualizada con éxito.",
                 )
 
-            # SI ES NUEVA VENTA
+          
             else:
                 num_fac = self.obtener_siguiente_consecutivo()
                 factura_doc = {
@@ -361,42 +391,52 @@ class PanelCarrito:
 
                 # DESCONTAR STOCK
                 for item in self.pos.carrito:
-
-                    codigo = item.get(
-                        "codigo",
-                        item.get("numReferencia", "")
-                    )
-
-                    cantidad = int(
-                        item.get("cantidad", 1)
-                    )
+                    codigo = item.get("codigo", item.get("numReferencia", ""))
+                    cantidad = int(item.get("cantidad", 1))
 
                     try:
-                      codigo_busqueda = int(codigo)
-                    except:
-                       codigo_busqueda = codigo
+                        codigo_busqueda = int(codigo)
+                    except ValueError:
+                        codigo_busqueda = codigo
 
-                    
-                    resultado = self.pos.db["productos"].update_one(
-                       {
-                           "numReferencia": codigo_busqueda
-                       },
-                       {
-                             "$inc": {
-                               "cantidadStock": -cantidad
-                              }
-                             }
-                           )
-                    
-                    
+                    self.pos.db["productos"].update_one(
+                        {"numReferencia": codigo_busqueda},
+                        {"$inc": {"cantidadStock": -cantidad}},
+                    )
 
+                # GENERAR ARCHIVO PDF LOCAL
                 ruta_pdf = FacturaPDFService.generar_pdf(factura_doc)
                 print("PDF generado:", ruta_pdf)
+
+              
+                # ENVÍO AUTOMÁTICO DE FACTURA POR CORREO
+               
+                correo_cliente = cliente_info.get("correo", "").strip()
+                nombre_cliente = cliente_info.get("nombre", "Cliente").strip()
+                estado_envio_msg = ""
+
+                if correo_cliente:
+                    try:
+                        from services.email_service import EmailService
+
+                        email_service = EmailService(self.pos.db)
+                        exito, mensaje = email_service.enviar_factura(
+                            correo_cliente, nombre_cliente, ruta_pdf, num_fac
+                        )
+
+                        if exito:
+                            estado_envio_msg = f"\n📧 Factura enviada a: {correo_cliente}"
+                        else:
+                            estado_envio_msg = f"\n⚠️ No se pudo enviar el correo: {mensaje}"
+                    except Exception as mail_err:
+                        print(f"Error al enviar correo de la factura: {mail_err}")
+                        estado_envio_msg = "\n⚠️ Error en el servidor de correo al intentar enviar."
+
                 self._mostrar_vista_previa_factura(factura_doc)
 
                 messagebox.showinfo(
                     "Venta Exitosa",
-                    f"✅ Venta procesada correctamente.\nFactura generada: {num_fac}",
+                    f"✅ Venta procesada correctamente.\nFactura generada: {num_fac}{estado_envio_msg}",
                 )
 
             self.limpiar_para_nueva_factura()
@@ -410,19 +450,16 @@ class PanelCarrito:
             ventana_principal = self.pos.obtener_ventana_principal()
 
             if ventana_principal:
-             ventana_principal.refrescar_productos()
-
-            self._mostrar_vista_previa_factura(factura_doc)
-            
+                ventana_principal.refrescar_productos()
 
         except Exception as e:
             messagebox.showerror(
-                "Error al procesar pago", f"Ocurrió un error al guardar la factura: {e}"
+                "Error al procesar pago",
+                f"Ocurrió un error al guardar la factura: {e}",
             )
-
     
     # GESTIÓN DE FACTURAS (Cargar, Editar, Anular)
-   
+    
     def cargar_factura_para_edicion(self, fac_id):
         """Abre un cuadro emergente modal dedicado para editar la factura adaptado al tema oscuro."""
         try:
@@ -437,12 +474,12 @@ class PanelCarrito:
 
             num_factura_real = factura.get("numero_factura") or str(factura.get("_id"))
 
-            # Definición de la paleta de colores del tema oscuro
-            COLOR_BG = "#1e293b"        # Fondo principal de la ventana modal
-            COLOR_CARD = "#0f172a"      # Fondo de las secciones/frames
-            COLOR_TEXT = "#ffffff"      # Texto principal de etiquetas y títulos
-            COLOR_ACCENT = "#0284c7"    # Azul para el botón de guardar
-            COLOR_ORANGE = "#d97706"    # Naranja para cambiar referencia
+            # Definición de la paleta de colores 
+            COLOR_BG = "#1e293b"        
+            COLOR_CARD = "#0f172a"   
+            COLOR_TEXT = "#ffffff"      
+            COLOR_ACCENT = "#0284c7"    
+            COLOR_ORANGE = "#d97706"    
 
             # Crear Ventana Emergente Modal
             modal = tk.Toplevel(self.pos)
@@ -451,7 +488,7 @@ class PanelCarrito:
             modal.configure(bg=COLOR_BG)
             modal.grab_set()
 
-            #  FRAME 1: DATOS DEL CLIENTE 
+            # FRAME 1 DATOS DEL CLIENTE
             frame_cli = tk.LabelFrame(
                 modal,
                 text=" Datos del Cliente ",
@@ -483,7 +520,7 @@ class PanelCarrito:
             entry_correo.insert(0, factura.get("correo_destino") or cliente_doc.get("correo", ""))
             entry_correo.grid(row=1, column=1, columnspan=3, sticky="w", padx=5, pady=4)
 
-            # FRAME 2: PRODUCTOS DE LA FACTURA 
+            # FRAME 2 PRODUCTOS DE LA FACTURA
             frame_prods = tk.LabelFrame(
                 modal,
                 text=" Productos en la Factura ",
@@ -544,7 +581,7 @@ class PanelCarrito:
 
             refrescar_tabla_modal()
 
-            # CAMBIO DE REFERENCIA / TALLA 
+            # CAMBIO DE REFERENCIA / TALLA
             frame_acciones = tk.Frame(frame_prods, bg=COLOR_CARD)
             frame_acciones.pack(fill="x", pady=5)
 
@@ -601,7 +638,7 @@ class PanelCarrito:
             )
             btn_cambiar_ref.pack(side="left", padx=5)
 
-            # BOTÓN DE GUARDAR CAMBIOS 
+            # BOTÓN DE GUARDAR CAMBIOS
             def guardar_cambios_factura():
                 try:
                     total_nuevo = sum(it["subtotal"] for it in items_locales)
@@ -652,11 +689,11 @@ class PanelCarrito:
         except Exception as e:
             messagebox.showerror("Error", f"Error al cargar la factura: {e}", parent=self.pos)
 
-   
+  
     # DIÁLOGOS Y POPUPS EMERGENTES
    
     def buscar_o_editar_factura(self):
-        #Muestra el cuadro emergente para ingresar la factura a editar/cargar
+        # Muestra el cuadro emergente para ingresar la factura a editar/cargar
         from tkinter import simpledialog
 
         num_factura = simpledialog.askstring(
@@ -672,96 +709,78 @@ class PanelCarrito:
 
     def anular_factura(self, fac_id):
         try:
-          factura = self._buscar_factura_en_db(fac_id)
+            factura = self._buscar_factura_en_db(fac_id)
 
-          if not factura:
-            messagebox.showerror(
-                "Error",
-                "Factura no encontrada."
-            )
-            return
+            if not factura:
+                messagebox.showerror(
+                    "Error",
+                    "Factura no encontrada."
+                )
+                return
 
-          numero = factura.get("numero_factura", "N/A")
+            numero = factura.get("numero_factura", "N/A")
 
-          confirmar = messagebox.askyesno(
-            "Confirmar",
-            f"¿Desea anular la factura {numero}?"
-        )
-
-          if not confirmar:
-            return
-
-          if getattr(self.pos, "db", None) is None:
-            from database.conexion import get_db
-            self.pos.db = get_db()
-
-       
-        # DEVOLVER STOCK
-        
-
-          for item in factura.get("items", []):
-
-              codigo = item.get(
-               "codigo",
-               item.get("numReferencia", "")
-             )
-
-              cantidad = int(
-              item.get("cantidad", 1)
-             )
-
-              try:
-                codigo_busqueda = int(codigo)
-              except:
-               codigo_busqueda = codigo
-
-              
-
-              resultado = self.pos.db["productos"].update_one(
-            {
-                 "numReferencia": codigo_busqueda
-            },
-            {
-                 "$inc": {
-                   "cantidadStock": cantidad
-            }
-            }
+            confirmar = messagebox.askyesno(
+                "Confirmar",
+                f"¿Desea anular la factura {numero}?"
             )
 
-              
+            if not confirmar:
+                return
 
-        
-        # ANULAR FACTURA
-        
+            if getattr(self.pos, "db", None) is None:
+                from database.conexion import get_db
+                self.pos.db = get_db()
 
-          self.pos.db["facturas"].update_one(
-            {"_id": factura["_id"]},
-            {
-                "$set": {
-                    "estado": "ANULADA",
-                    "fecha_anulacion": datetime.now()
+            # DEVOLVER STOCK
+            for item in factura.get("items", []):
+                codigo = item.get(
+                    "codigo",
+                    item.get("numReferencia", "")
+                )
+
+                cantidad = int(
+                    item.get("cantidad", 1)
+                )
+
+                try:
+                    codigo_busqueda = int(codigo)
+                except ValueError:
+                    codigo_busqueda = codigo
+
+                resultado = self.pos.db["productos"].update_one(
+                    {"numReferencia": codigo_busqueda},
+                    {"$inc": {"cantidadStock": cantidad}}
+                )
+
+            # ANULAR FACTURA
+            self.pos.db["facturas"].update_one(
+                {"_id": factura["_id"]},
+                {
+                    "$set": {
+                        "estado": "ANULADA",
+                        "fecha_anulacion": datetime.now()
+                    }
                 }
-            }
-        )
+            )
 
-          messagebox.showinfo(
-            "Correcto",
-            f"Factura {numero} anulada correctamente.\n\nStock restaurado."
-        )
+            messagebox.showinfo(
+                "Correcto",
+                f"Factura {numero} anulada correctamente.\n\nStock restaurado."
+            )
 
-          self.limpiar_para_nueva_factura()
+            self.limpiar_para_nueva_factura()
 
-          ventana_principal = self.pos.obtener_ventana_principal()
+            ventana_principal = self.pos.obtener_ventana_principal()
 
-          if ventana_principal:
-           ventana_principal.refrescar_productos()
-        
+            if ventana_principal:
+                ventana_principal.refrescar_productos()
 
         except Exception as e:
-         messagebox.showerror(
-            "Error",
-            str(e)
-        )
+            messagebox.showerror(
+                "Error",
+                str(e)
+            )
 
     def limpiar_para_nueva_factura(self):
         self.pos.carrito = []
@@ -782,51 +801,46 @@ class PanelCarrito:
         self._mostrar_factura_vacia()
 
     def realizar_cierre_caja(self):
-
         try:
+            usuario = (
+                self.pos.empleado.usuario
+                if self.pos.empleado
+                else "Sistema"
+            )
 
-         usuario = (
-            self.pos.empleado.usuario
-            if self.pos.empleado
-            else "Sistema"
-         )
+            cierre_doc = generar_cierre(
+                self.pos.db,
+                usuario
+            )
 
-         cierre_doc = generar_cierre(
-            self.pos.db,
-            usuario
-         )
-
-         self.mostrar_vista_previa_cierre(cierre_doc) 
+            self.mostrar_vista_previa_cierre(cierre_doc)
 
         except Exception as e:
-         messagebox.showerror(
-            "Error",
-            f"No fue posible generar el cierre.\n\n{e}"
-         )
+            messagebox.showerror(
+                "Error",
+                f"No fue posible generar el cierre.\n\n{e}"
+            )
 
     def mostrar_vista_previa_cierre(self, cierre_doc):
-
         ventana = tk.Toplevel(self.pos)
         ventana.title(f"Cierre de Caja - {cierre_doc['numero_cierre']}")
         ventana.geometry("600x500")
         ventana.configure(bg="#0f172a")
 
         texto = tk.Text(
-           ventana,
-           bg="#050509",
-           fg="#39FF14",
-           insertbackground="#39FF14",
-           font=("Consolas", 12, "bold"),
+            ventana,
+            bg="#050509",
+            fg="#39FF14",
+            insertbackground="#39FF14",
+            font=("Consolas", 12, "bold"),
             bd=0,
             relief="flat"
-)
+        )
 
         texto.pack(fill="both", expand=True, padx=10, pady=10)
 
         contenido = f"""
-
-
-           CIERRE DE CAJA
+            CIERRE DE CAJA
 
 Número:
 {cierre_doc['numero_cierre']}
@@ -849,13 +863,15 @@ ${cierre_doc['total_anulaciones']:,.0f}
 TOTAL NETO:
 ${cierre_doc['total_neto']:,.0f}
 
+     
+
 =========================================
 """
 
         texto.insert("1.0", contenido)
-        texto.config(state="disabled")     
+        texto.config(state="disabled")
 
-    
+
     # VISTA PREVIA FACTURA DIGITAL
     
     def _mostrar_factura_vacia(self):
@@ -898,59 +914,52 @@ ${cierre_doc['total_neto']:,.0f}
         texto = (
             f"========================================\n"
             f"          FACTURA DE VENTA              \n"
-            f" No: {num_fac}\n"
-            f" Fecha: {fecha_str}\n"
+            f"========================================\n"
+            f"No. Factura : {num_fac}\n"
+            f"Fecha       : {fecha_str}\n"
+            f"Cliente     : {nom_cli}\n"
+            f"Cédula/NIT  : {ced_cli}\n"
             f"----------------------------------------\n"
-            f" Cliente: {nom_cli}\n"
-            f" Cédula:  {ced_cli}\n"
-            f"----------------------------------------\n"
-            f" CANT    DESCRIPCION            SUBTOTAL \n"
+            f"CANT  DESCRIPCIÓN              SUBTOTAL\n"
             f"----------------------------------------\n"
         )
 
         for item in factura.get("items", []):
-            try:
-                cant = int(item.get("cantidad", item.get("cant", 1)))
-            except (ValueError, TypeError):
-                cant = 1
+            nombre = item.get("nombre", "Producto")[:20].ljust(20)
+            cant = str(item.get("cantidad", 1)).rjust(4)
+            subtotal = f"${item.get('subtotal', 0.0):,.0f}".rjust(10)
+            texto += f"{cant}  {nombre} {subtotal}\n"
 
-            nom = str(
-                item.get(
-                    "nombre",
-                    item.get("producto", item.get("descripcion", "Producto")),
-                )
-            )[:18].ljust(18)
-
-            try:
-                precio_unit = float(
-                    item.get(
-                        "precio",
-                        item.get(
-                            "valorVenta", item.get("precio_unitario", 0.0)
-                        ),
-                    )
-                )
-            except (ValueError, TypeError):
-                precio_unit = 0.0
-
-            try:
-                sub = float(item.get("subtotal", cant * precio_unit))
-            except (ValueError, TypeError):
-                sub = cant * precio_unit
-
-            texto += f" {str(cant).rjust(3)}    {nom} $ {sub:,.2f}\n"
-
-        try:
-            total_fac = float(factura.get("total", 0.0))
-        except (ValueError, TypeError):
-            total_fac = 0.0
-
+        total = factura.get("total", 0.0)
         texto += (
             f"----------------------------------------\n"
-            f" TOTAL A PAGAR:          $ {total_fac:,.2f}\n"
+            f"TOTAL A PAGAR:           ${total:,.0f}\n"
             f"========================================\n"
-            f"        ¡GRACIAS POR SU COMPRA!         \n"
+            f"      ¡GRACIAS POR SU COMPRA!           \n"
+            f"========================================\n"
         )
 
         self.pos.txt_factura_digital.insert(tk.END, texto)
         self.pos.txt_factura_digital.config(state="disabled")
+
+    def eliminar_item_seleccionado(self):
+        """Elimina la fila seleccionada del carrito y recalcula totales."""
+        if not hasattr(self.pos, "tree_cart"):
+            return
+
+        seleccion = self.pos.tree_cart.selection()
+        if not seleccion:
+            messagebox.showwarning(
+                "Selección Requerida",
+                "⚠️ Seleccione un producto del carrito para eliminarlo.",
+                parent=self.pos,
+            )
+            return
+
+        # Obtener la posición del elemento seleccionado
+        item_id = seleccion[0]
+        idx = self.pos.tree_cart.index(item_id)
+
+        if 0 <= idx < len(self.pos.carrito):
+            del self.pos.carrito[idx]
+            self.actualizar_tabla_carrito()
