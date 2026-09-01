@@ -1,12 +1,12 @@
 # SistemaPMV
 
-SistemaPMV es una aplicación de gestión de inventario orientada a pequeños y medianos almacenes de calzado. El sistema busca ofrecer una solución accesible para negocios que no cuentan con el presupuesto necesario para implementar plataformas empresariales costosas o servicios en la nube.
+SistemaPMV es una aplicación de gestión de inventario y punto de venta orientada a pequeños y medianos almacenes de calzado. El sistema busca ofrecer una solución accesible para negocios que no cuentan con el presupuesto necesario para implementar plataformas empresariales costosas o servicios en la nube.
 
-La aplicación permite administrar productos, empleados, clientes, proveedores, ventas e inventario. Además, incorpora autenticación de usuarios, generación de facturas PDF y herramientas administrativas para la gestión operativa del negocio, utilizando tecnologías locales y de fácil implementación.
+La aplicación permite administrar productos, empleados, clientes, proveedores, ventas, contabilidad y control de inventario. Además, incorpora autenticación de usuarios mediante librerías de seguridad y cifrado (`hashlib` y `bcrypt`), generación de facturas PDF, envío de correos y herramientas administrativas para la gestión operativa del negocio utilizando tecnologías locales y de fácil implementación.
 
-El proyecto está siendo desarrollado como parte del proceso formativo ADSO del SENA, aplicando buenas prácticas de organización de código, control de versiones con Git y trabajo colaborativo mediante GitHub.
+El proyecto está siendo desarrollado como parte del proceso formativo **ADSO del SENA**, aplicando buenas prácticas de organización de código, control de versiones con Git y trabajo colaborativo mediante GitHub.
 
-Actualmente el sistema opera de manera local utilizando Python, Tkinter y MongoDB, permitiendo una implementación sencilla sin requerir servicios externos o infraestructura en la nube.
+Actualmente el sistema opera de manera local utilizando **Python, Tkinter y MongoDB**, permitiendo una implementación sencilla sin requerir servicios externos o infraestructura en la nube.
 
 ---
 
@@ -14,63 +14,80 @@ Actualmente el sistema opera de manera local utilizando Python, Tkinter y MongoD
 
 Desarrollar un sistema modular, económico y fácil de implementar que permita:
 
-- Gestionar productos de almacenes de calzado.
-- Administrar empleados y usuarios del sistema.
-- Garantizar el acceso mediante autenticación de usuarios.
-- Organizar inventario de manera local y eficiente.
-- Gestionar clientes, ventas y facturación.
-- Facilitar la administración operativa mediante módulos de proveedores, nómina y cuentas por pagar.
-- Escalar futuras funcionalidades como reportes, estadísticas y herramientas administrativas avanzadas.
+* Gestionar productos de almacenes de calzado.
+* Administrar empleados y usuarios del sistema.
+* Garantizar el acceso mediante autenticación segura de usuarios.
+* Organizar inventario de manera local y eficiente.
+* Gestionar clientes, ventas y facturación.
+* Facilitar la administración operativa mediante módulos de proveedores, nómina, contabilidad y servicios públicos.
+* Escalar futuras funcionalidades como reportes, estadísticas y herramientas administrativas avanzadas.
 
 ---
-# Stack tecnológico
 
-| Tecnología         | Justificación                                                                        |
-| ------------------ | ------------------------------------------------------------------------------------ |
-| Python             | Permite desarrollar aplicaciones rápidas, modulares y fáciles de mantener.           |
-| Tkinter            | Facilita la creación de interfaces gráficas locales sin depender de tecnologías web. |
-| MongoDB            | Base de datos NoSQL flexible y ligera para gestionar inventario y usuarios.          |
-| PyMongo            | Permite integrar Python con MongoDB de manera sencilla.                              |
-| Pillow (PIL)       | Permite cargar, procesar y visualizar imágenes dentro de la interfaz gráfica.        |
-| ReportLab          | Permite generar documentos PDF para la facturación del sistema.                      |
-| Git                | Control de versiones para seguimiento del desarrollo.                                |
-| GitHub             | Trabajo colaborativo y respaldo del proyecto.                                        |
-| Visual Studio Code | Entorno de desarrollo utilizado por el equipo.                                       |
+# Stack tecnológico y Seguridad
+
+| Tecnología / Librería          | Justificación                                                                        |
+| :----------------------------- | :----------------------------------------------------------------------------------- |
+| **Python**                     | Permite desarrollar aplicaciones rápidas, modulares y fáciles de mantener.           |
+| **Tkinter**                    | Facilita la creación de interfaces gráficas locales sin depender de tecnologías web. |
+| **MongoDB**                    | Base de datos NoSQL flexible y ligera para gestionar inventario y usuarios.          |
+| **PyMongo**                    | Permite integrar Python con MongoDB de manera sencilla.                              |
+| **Pillow (PIL)**               | Permite cargar, procesar y visualizar imágenes dentro de la interfaz gráfica.        |
+| **ReportLab**                  | Permite generar documentos PDF para la facturación del sistema.                      |
+| **hashlib** (`import hashlib`) | Utilizado para el manejo de hashes, como SHA-256, en la validación de claves.        |
+| **bcrypt** (`import bcrypt`)   | Librería empleada para el hash seguro de contraseñas de usuarios en el sistema.      |
+| **Git & GitHub**               | Control de versiones y trabajo colaborativo en equipo.                               |
 
 ---
 
 # Características principales
 
-- Interfaz gráfica desarrollada con Tkinter.
-- Base de datos MongoDB.
-- Gestión completa de productos (CRUD).
-- Gestión completa de empleados (CRUD).
-- Gestión de clientes.
-- Gestión de proveedores.
-- Sistema de autenticación de usuarios.
-- Punto de venta (POS).
-- Generación automática de facturas PDF.
-- Recuperación de facturas desde MongoDB.
-- Control automático de inventario y stock.
-- Gestión de nómina.
-- Gestión de cuentas por pagar.
-- Cierre de caja.
-- Arquitectura modular por capas.
-- Persistencia local de datos.
-- Control de versiones mediante Git y GitHub.
+* Interfaz gráfica moderna desarrollada con Tkinter.
+* Base de datos NoSQL en MongoDB.
+* Gestión completa de productos (CRUD).
+* Gestión completa de empleados (CRUD) con parámetros de nómina.
+* Gestión de clientes.
+* Gestión de proveedores, facturas y abonos (Cuentas por pagar).
+* Módulo de contabilidad y liquidación de nómina.
+* Sistema de autenticación seguro con `hashlib` y `bcrypt`.
+* Punto de Venta (POS) con carrito de compras integrado.
+* Generación automática de facturas en formato PDF y recuperación histórica.
+* Control automático de inventario y stock.
+* Descuento de inventario al realizar ventas y reposición al anular operaciones.
+* Cierre de caja diario.
+* Dashboard financiero y analítico.
+* Configuración general del sistema.
+* Configuración de credenciales de correo SMTP.
+* Arquitectura modular por capas.
+* Persistencia local de datos.
 
 ---
+
 # Descripción de componentes
 
-El sistema se encuentra organizado mediante una arquitectura modular por capas:
+El sistema se encuentra organizado mediante una arquitectura modular por capas.
 
 ## UI
 
-Gestiona la interfaz gráfica del sistema, formularios, ventanas, eventos de usuario y módulos operativos como productos, empleados, clientes y punto de venta (POS).
+Gestiona la interfaz gráfica del sistema, formularios, ventanas, eventos de usuario y módulos operativos como:
+
+* Productos.
+* Empleados.
+* Clientes.
+* Punto de Venta (POS).
+* Contabilidad.
+* Dashboard.
+* Egresos.
+* Ingresos.
+* Movimientos.
+* Nóminas.
+* Proveedores.
+* Servicios públicos.
+* Configuración.
 
 ## Services
 
-Contiene la lógica de negocio del sistema, validaciones de seguridad, generación de facturas PDF, procesos de ventas, cierre de caja y comunicación con la base de datos.
+Contiene la lógica de negocio del sistema, validaciones de seguridad (`security_service.py`), generación de facturas PDF, envío de correos (`email_service.py`), procesos de ventas, control de caja, contabilidad y comunicación con la base de datos.
 
 ## Models
 
@@ -82,66 +99,98 @@ Centraliza la conexión con MongoDB mediante PyMongo.
 
 ---
 
-Usuario
-    │
-    ▼
-Inicio de sesión
-    │
-    ▼
-Panel principal
-    │
-    ├── POS / Ventas
-    ├── Productos
-    ├── Clientes
-    ├── Empleados
-    └── Contabilidad (en desarrollo)
-            │
-            ▼
-        Services
-            │
-            ▼
-         MongoDB
-
 # Estructura del proyecto
 
 ```text
 SistemaPMV/
 │
+├── .vscode/
+│   └── settings.json
+│
 ├── Assets/
 │
 ├── database/
-│   └── conexion.py
+│   ├── conexion.py
+│   └── __pycache__/
 │
 ├── docs/
+│   ├── colaborativo1.png
+│   ├── colaborativo2.png
+│   ├── configuracion.png
+│   ├── dash.png
+│   ├── egresos .png
+│   ├── ingresos.png
+│   ├── inicio_sistema .png
+│   ├── login.png
+│   ├── modulo_clientes.png
+│   ├── modulo_contabilidad.png
+│   ├── modulo_empleados .png
+│   ├── modulo_pos.png
+│   ├── modulo_productos .png
+│   ├── moviminetos.png
+│   ├── nomina.png
+│   ├── proveedores.png
+│   └── servicios.png
 │
 ├── facturas/
+│   ├── .gitkeep
+│   └── FAC-000018.pdf
 │
 ├── models/
+│   ├── cliente.py
+│   ├── empleado.py
+│   ├── factura.py
+│   ├── ingreso.py
+│   ├── nomina.py
+│   ├── producto.py
+│   ├── proveedor.py
+│   ├── servicio_publico.py
+│   └── __pycache__/
 │
 ├── services/
 │   ├── cierre_caja_service.py
 │   ├── cliente_service.py
 │   ├── contabilidad_service.py
+│   ├── email_service.py
 │   ├── empleado_service.py
 │   ├── factura_pdf_service.py
+│   ├── ingreso_service.py
 │   ├── pos_service.py
 │   ├── producto_service.py
-│   └── security_service.py
+│   ├── proveedor_service.py
+│   ├── security_service.py
+│   ├── servicio_publico_service.py
+│   └── __pycache__/
 │
 ├── ui/
-│   ├── pos/
+│   │
+│   ├── contabilidad/
+│   │   ├── ui_contabilidad.py
+│   │   ├── ui_dashboard.py
+│   │   ├── ui_egresos.py
+│   │   ├── ui_ingresos.py
+│   │   ├── ui_movimientos.py
+│   │   ├── ui_nominas.py
+│   │   ├── ui_proveedores.py
+│   │   ├── ui_servicios.py
 │   │   ├── __init__.py
+│   │   └── __pycache__/
+│   │
+│   ├── pos/
 │   │   ├── factura_modal.py
 │   │   ├── panel_carrito.py
 │   │   ├── panel_productos.py
-│   │   └── pos_frame.py
+│   │   ├── pos_frame.py
+│   │   ├── __init__.py
+│   │   └── __pycache__/
 │   │
 │   ├── login_window.py
 │   ├── main_window.py
 │   ├── ui_clientes.py
-│   ├── ui_contabilidad.py
+│   ├── ui_configuracion.py
 │   ├── ui_empleados.py
-│   └── ui_productos.py
+│   ├── ui_productos.py
+│   └── __pycache__/
 │
 ├── .gitignore
 ├── app.py
@@ -150,79 +199,29 @@ SistemaPMV/
 
 ---
 
-# Funcionalidades implementadas
-
-- Sistema de autenticación de usuarios.
-- Protección de contraseñas mediante hash SHA-256.
-- CRUD completo de productos.
-- CRUD completo de empleados.
-- CRUD completo de clientes.
-- Punto de Venta (POS).
-- Generación de facturas en formato PDF.
-- Apertura y recuperación de facturas históricas.
-- Gestión de ventas y carrito de compras.
-- Actualización automática de inventario al realizar ventas.
-- Restauración de stock al anular facturas.
-- Cierre de caja.
-- Persistencia de datos mediante MongoDB.
-- Arquitectura modular por capas.
-- Interfaz gráfica desarrollada con Tkinter.
-- Control de versiones mediante Git y GitHub.
-
----
-# Funcionalidades en desarrollo
-
-- Módulo de contabilidad.
-- Reportes financieros.
-- Gestión avanzada de proveedores.
-
----
-
-# Acceso al sistema
-
-Para ingresar al sistema utilice las siguientes credenciales iniciales incluidas en la base de datos de prueba:
-
-| Rol           | Usuario | Contraseña |
-| ------------- | ------- | ---------- |
-| Administrador | admin   | 1234       |
-
-> Nota: La contraseña se almacena cifrada mediante hash SHA-256 en la base de datos. La credencial mostrada corresponde únicamente al acceso inicial del sistema de pruebas.
-
----
-
 # Configuración y Restauración de la Base de Datos
 
 Antes de ejecutar SistemaPMV es necesario instalar MongoDB y restaurar la base de datos incluida en el proyecto.
 
----
-
 ## 1. Descargar MongoDB Community Server
 
-Descargue MongoDB Community Server desde el sitio oficial:
+Descargue **MongoDB Community Server** desde el sitio oficial:
 
 https://www.mongodb.com/try/download/community
 
-Seleccione:
-
-- Versión estable más reciente.
-- Sistema operativo Windows.
-- Instalador MSI.
-
----
+Seleccione la versión estable más reciente para Windows en formato MSI.
 
 ## 2. Instalar MongoDB
 
 Durante la instalación se recomienda:
 
-- Seleccionar la opción **Complete**.
-- Instalar **MongoDB Compass**.
-- Mantener MongoDB como servicio de Windows.
+* Seleccionar la opción **Complete**.
+* Instalar **MongoDB Compass**.
+* Mantener MongoDB como servicio de Windows.
 
-Una vez finalizada la instalación, reinicie el equipo si el instalador lo solicita.
+Reinicie el equipo si el instalador lo solicita.
 
----
-
-## 3. Verificar la instalación de MongoDB
+## 3. Verificar la instalación
 
 Abra PowerShell o CMD y ejecute:
 
@@ -230,19 +229,11 @@ Abra PowerShell o CMD y ejecute:
 mongosh
 ```
 
-Si la instalación fue correcta, se abrirá la consola interactiva de MongoDB.
-
----
-
 ## 4. Descargar MongoDB Database Tools
 
-SistemaPMV utiliza MongoDB Database Tools para restaurar el respaldo de la base de datos.
-
-Descarga oficial:
+Descargue las herramientas de base de datos desde:
 
 https://www.mongodb.com/try/download/database-tools
-
-Descargue la versión correspondiente a Windows y descomprima el archivo.
 
 La carpeta utilizada para este proyecto es:
 
@@ -250,107 +241,81 @@ La carpeta utilizada para este proyecto es:
 mongodb-database-tools-windows-x86_64-100.14.0
 ```
 
----
+## 5. Restaurar la base de datos `zapateria_pmv`
 
-## 5. Base de datos utilizada
-
-Nombre de la base de datos:
-
-```text
-zapateria_pmv
-```
-
-Cadena de conexión utilizada por el sistema:
-
-```python
-MongoClient("mongodb://localhost:27017/")
-```
-
----
-
-## 6. Restaurar la base de datos
-
-El proyecto incluye un archivo comprimido que contiene:
-
-- Backup de la base de datos `zapateria_pmv`
-- MongoDB Database Tools
-
-### Paso 1. Descomprimir el archivo
-
-Extraiga el archivo en cualquier ubicación del computador.
-
-Ejemplo:
-
-```text
-C:\SistemaPMV\
-```
-
----
-
-### Paso 2. Abrir la terminal en la carpeta bin
-
-Ubíquese dentro de la carpeta:
+Ubíquese en la carpeta `bin` de las herramientas y ejecute:
 
 ```bash
-cd mongodb-database-tools-windows-x86_64-100.14.0\bin
+mongorestore --db zapateria_pmv "ruta\del\respaldo\zapateria_pmv"
 ```
 
----
-
-### Paso 3. Ejecutar la restauración
-
-Ejecute el siguiente comando:
-
-```bash
-mongorestore --db zapateria_pmv "ruta\zapateria_pmv"
-```
-
-Ejemplo:
-
-```bash
-mongorestore --db zapateria_pmv "C:\Users\User\Desktop\zapateria_pmv"
-```
-
----
-
-### Paso 4. Verificar la restauración
-
-Abra Mongo Shell:
+Verifique la restauración ejecutando:
 
 ```bash
 mongosh
 ```
 
-Ejecute:
+Luego:
 
 ```javascript
-show dbs
 use zapateria_pmv
 show collections
 ```
 
-Deberán visualizarse las siguientes colecciones:
+Las colecciones disponibles son:
 
-```text
-clientes
-empleados
-facturas
-productos
-cierres_caja
-config_sistema
-contabilidad
-cuentas_por_pagar
-nominas
-proveedores
-```
-
-Si las colecciones aparecen correctamente, la restauración fue exitosa.
+* `clientes`
+* `empleados`
+* `facturas`
+* `productos`
+* `cierres_caja`
+* `config_sistema`
+* `contabilidad`
+* `cuentas_por_pagar`
+* `nominas`
+* `proveedores`
 
 ---
 
-# Instalación del Proyecto
+# Configuración del correo electrónico
 
-Una vez restaurada la base de datos, proceda con la instalación del proyecto.
+Si el sistema requiere enviar notificaciones, reportes o facturas por correo electrónico mediante `email_service.py`, es necesario configurar una **Contraseña de Aplicación de Google (App Password)**.
+
+## Paso 1: Activar la Verificación en 2 Pasos
+
+1. Acceda a su cuenta de Google.
+2. Diríjase a **Gestión de tu Cuenta de Google**.
+3. Seleccione **Seguridad**.
+4. Busque el apartado **Cómo inicias sesión en Google**.
+5. Active la **Verificación en 2 pasos** siguiendo las instrucciones.
+
+## Paso 2: Generar la Contraseña de Aplicación
+
+1. Regrese a la sección **Seguridad**.
+2. Busque **Contraseñas de aplicaciones**.
+3. Google puede solicitar nuevamente la autenticación.
+4. En **Seleccionar aplicación**, seleccione **Otra (nombre personalizado)**.
+5. Introduzca:
+
+```text
+SistemaPMV Inventario
+```
+
+6. Seleccione **Generar**.
+
+## Paso 3: Configurar la contraseña
+
+Google mostrará una contraseña de aplicación de 16 caracteres.
+
+Copie la contraseña **sin espacios** y guárdela de forma segura.
+
+> **Importante:** Google no volverá a mostrar esta contraseña después de cerrar la ventana.
+
+Introduzca esta contraseña de aplicación junto con el correo electrónico emisor desde el módulo de **Configuración General** del sistema.
+
+---
+
+# Instalación del proyecto
 
 ## 1. Clonar el repositorio
 
@@ -358,285 +323,195 @@ Una vez restaurada la base de datos, proceda con la instalación del proyecto.
 git clone https://github.com/fperdomo161dev-design/SistemaPMV.git
 ```
 
----
-
-## 2. Entrar al proyecto
+## 2. Entrar al directorio del proyecto
 
 ```bash
 cd SistemaPMV
 ```
 
----
-
 ## 3. Instalar dependencias
 
+Ejecute:
+
 ```bash
-pip install pymongo pillow reportlab
+pip install pymongo pillow reportlab bcrypt
 ```
 
----
-
-# Acceso al Sistema
-
-Credenciales incluidas en la base de datos de prueba:
-
-| Rol | Usuario | Contraseña |
-|------|----------|------------|
-| Administrador | admin | 1234 |
-
-> La contraseña es almacenada mediante hash SHA-256 dentro de la base de datos.
+> **Nota:** `hashlib` viene incluido de forma nativa en Python, por lo que no es necesario instalarlo mediante `pip`.
 
 ---
 
-# Ejecución del Proyecto
+# Acceso al sistema
 
-Antes de ejecutar el sistema asegúrese de que MongoDB esté iniciado.
+Credenciales iniciales de prueba almacenadas en la base de datos:
 
-Ejecutar:
+| Rol               | Usuario | Contraseña |
+| :---------------- | :------ | :--------- |
+| **Administrador** | `admin` | `1234`     |
+
+> **Nota:** Estas credenciales son únicamente para pruebas y demostración del proyecto.
+
+---
+
+# Ejecución del proyecto
+
+Asegúrese de que el servicio de MongoDB esté activo en su equipo.
+
+Luego, desde la carpeta principal del proyecto, ejecute:
 
 ```bash
 python app.py
 ```
 
-Al iniciar sesión podrá acceder a:
-
-- Productos
-- Empleados
-- Clientes
-- POS / Ventas
-- Contabilidad (en desarrollo)
+La aplicación abrirá la ventana de inicio de sesión.
 
 ---
 
-# Flujo de trabajo con Git
+# Capturas y Evidencia Funcional del Sistema
 
-## Actualizar proyecto
+## Pantalla de Inicio de Sesión
 
-```bash
-git pull origin main
-```
+Vista inicial para autenticar las credenciales del usuario.
 
-## Guardar cambios
-
-```bash
-git add .
-git commit -m "descripcion del cambio"
-```
-
-## Subir cambios
-
-```bash
-git push origin main
-```
-
-# Evidencia funcional
-
-El proyecto cuenta actualmente con las siguientes funcionalidades implementadas:
-
-- Sistema de autenticación de usuarios.
-- Protección de contraseñas mediante hash SHA-256.
-- CRUD completo de productos.
-- CRUD completo de empleados.
-- CRUD completo de clientes.
-- Punto de Venta (POS).
-- Gestión de carrito de compras.
-- Generación automática de facturas PDF.
-- Apertura y recuperación de facturas históricas.
-- Actualización automática de inventario y stock.
-- Anulación de facturas con restauración de stock.
-- Cierre de caja.
-- Persistencia de datos utilizando MongoDB.
-- Arquitectura modular por capas.
-- Interfaz gráfica desarrollada con Tkinter.
-- Control de versiones mediante Git y GitHub.
-
-# Capturas del sistema
-
-Las siguientes imágenes evidencian las principales funcionalidades implementadas en SistemaPMV.
+![Pantalla de Inicio de Sesión](docs/login.png)
 
 ---
 
-## Inicio de sesión
+## Pantalla de Bienvenida / Inicio del Sistema
 
-El sistema cuenta con un mecanismo de autenticación que valida las credenciales de acceso de los usuarios registrados. Las contraseñas son almacenadas de forma segura mediante hash SHA-256.
+Vista principal que se muestra después de iniciar sesión correctamente.
 
-![Login](docs/login.png)
-
----
-
-## Menú principal
-
-Panel principal desde donde se accede a los diferentes módulos del sistema según las funcionalidades disponibles.
-
-![Menú principal](docs/Menú principal.png)
+![Pantalla de Inicio del Sistema](docs/inicio_sistema%20.png)
 
 ---
 
-## Gestión de Productos
+## Punto de Venta (POS)
 
-Permite administrar el inventario de productos mediante operaciones CRUD.
+Módulo operativo para la selección de productos, administración del carrito y emisión de comprobantes.
 
-Funcionalidades:
-
-- Registrar productos.
-- Buscar productos por referencia.
-- Actualizar información de productos.
-- Eliminar productos.
-- Consultar inventario en tiempo real.
-
-![Productos](docs/productos.png)
+![Punto de Venta](docs/modulo_pos.png)
 
 ---
 
-## Gestión de Empleados
+## Gestión de Productos e Inventario
 
-Permite administrar la información de los empleados registrados en el sistema.
+Permite administrar el catálogo de calzado y controlar las existencias disponibles.
 
-Funcionalidades:
-
-- Registrar empleados.
-- Buscar empleados por cédula.
-- Actualizar información.
-- Eliminar registros.
-- Consultar listado de empleados.
-
-![Empleados](docs/empleados.png)
+![Gestión de Productos](docs/modulo_productos%20.png)
 
 ---
 
 ## Gestión de Clientes
 
-Permite registrar y consultar la información de los clientes asociados a las ventas realizadas.
+Permite registrar y administrar la información de los compradores.
 
-Funcionalidades:
-
-- Registrar clientes.
-- Consultar clientes existentes.
-- Actualizar información.
-- Gestionar historial asociado a ventas.
-
-![Clientes](docs/Clientes.png)
----
-
-## Punto de Venta (POS)
-
-Módulo encargado del proceso de ventas y facturación.
-
-Funcionalidades:
-
-- Selección de productos.
-- Gestión de carrito de compras.
-- Cálculo automático de totales.
-- Generación de ventas.
-- Actualización automática de inventario.
-
-![POS](docs/POSVentas.png)
+![Gestión de Clientes](docs/modulo_clientes.png)
 
 ---
 
-## Facturación Digital
+## Administración de Personal (Empleados)
 
-Generación automática de facturas en formato PDF a partir de las ventas realizadas.
+Permite gestionar los datos, cargos y parámetros del personal del negocio.
 
-Funcionalidades:
-
-- Generación de factura PDF.
-- Apertura de facturas históricas.
-- Recuperación automática de facturas almacenadas.
-- Consulta por número de factura.
-
-![Factura](docs/Factura_1.png)
-
-![Factura](docs/Factura_2.png)
+![Gestión de Empleados](docs/modulo_empleados%20.png)
 
 ---
 
-## Cierre de Caja
+## Módulo de Contabilidad General
 
-Permite consolidar y registrar los movimientos de caja generados durante la operación diaria.
+Panel principal con acceso a los diferentes submódulos financieros.
 
-Funcionalidades:
-
-- Registro de cierre diario.
-- Consolidación de ventas.
-- Generación de información para control administrativo.
-
-![Cierre de Caja](docs/Cierre de caja.png)
+![Módulo de Contabilidad](docs/modulo_contabilidad.png)
 
 ---
 
-## Control de Inventario
+## Dashboard Financiero y Analítico
 
-El sistema actualiza automáticamente las existencias de productos al realizar ventas o anular facturas.
+Permite visualizar ingresos, egresos, balances y estadísticas relacionadas con las ventas.
 
-Funcionalidades:
-
-- Descuento automático de stock.
-- Restauración de inventario al anular ventas.
-- Consulta de existencias disponibles.
-
-
+![Dashboard Financiero](docs/dash.png)
 
 ---
 
-## Módulo de Contabilidad (En desarrollo)
+## Historial Unificado de Movimientos
 
-Se encuentra implementada la interfaz inicial del módulo, actualmente en proceso de desarrollo de la lógica de negocio y generación de reportes financieros.
+Registro cronológico de las diferentes transacciones financieras y operativas realizadas en el sistema.
 
-![Contabilidad](docs/Contabilidad%20en%20desarrollo.png)
+![Historial de Movimientos](docs/moviminetos.png)
 
 ---
 
+## Control de Ingresos
 
-## Trabajo colaborativo
+Permite filtrar y visualizar las entradas de dinero y los cierres de caja.
 
-#### Commits de Yova23
-![Commits de Yova23](docs/commits_1.png)
+![Control de Ingresos](docs/ingresos.png)
 
-#### Commits de fperdomodev
-![Commits de fperdomodev](docs/commits_2.png)
 ---
 
-# Recursos adicionales
+## Gestión de Egresos y Gastos Operativos
 
-El proyecto incluye:
+Permite controlar las salidas de dinero, pagos y abonos realizados por el negocio.
 
-- Backup de la base de datos
-- MongoDB Database Tools
-- Video explicativo de instalación y funcionamiento
-- Evidencias visuales del sistema
+![Gestión de Egresos](docs/egresos%20.png)
+
+---
+
+## Gestión de Servicios Públicos
+
+Permite registrar y consultar los pagos relacionados con los servicios públicos del establecimiento.
+
+![Servicios Públicos](docs/servicios.png)
+
+---
+
+## Panel de Facturas y Proveedores
+
+Permite realizar seguimiento a pedidos, facturas de proveedores y abonos pendientes.
+
+![Panel de Proveedores](docs/proveedores.png)
+
+---
+
+## Liquidación y Pago de Nómina
+
+Permite gestionar los pagos salariales periódicos y los pagos correspondientes a días trabajados.
+
+![Liquidación de Nómina](docs/nomina.png)
+
+---
+
+## Configuración General del Sistema
+
+Módulo utilizado para configurar los datos del negocio, factura PDF, clave de administrador y credenciales SMTP.
+
+![Configuración General](docs/configuracion.png)
+
+---
+
+# Trabajo colaborativo — Git & GitHub
+
+El proyecto fue desarrollado mediante trabajo colaborativo utilizando **Git y GitHub**, permitiendo llevar un registro de los cambios realizados por cada integrante del equipo.
+
+## Historial de Commits de Yovanna Rodríguez
+
+![Commits de Yovanna Rodríguez](docs/colaborativo1.png)
+
+## Historial de Commits de Fredy Perdomo
+
+![Commits de Fredy Perdomo](docs/colaborativo2.png)
 
 ---
 
 # Integrantes
 
-- Fredy Perdomo
-- Yovanna Rodríguez
+* **Fredy Perdomo**
+* **Yovanna Rodríguez**
 
 ---
 
+# Proyecto formativo
 
-## Estado del proyecto
+**ADSO — SENA**
 
-### Funcionalidades completadas
-
-* Inicio de sesión.
-* Gestión completa de productos (CRUD).
-* Gestión completa de empleados (CRUD).
-* Gestión de clientes.
-* Registro y gestión de ventas.
-* Generación de facturas en formato PDF.
-* Consulta y apertura de facturas.
-* Control y actualización automática del inventario.
-* Actualización del stock al realizar ventas.
-* Restitución del stock al anular facturas.
-* Cierre y control de caja.
-* Persistencia de datos mediante MongoDB.
-* Arquitectura modular.
-* Control de versiones mediante Git y GitHub.
-
-### Próximas funcionalidades
-
-* Generación de reportes de ventas e inventario.
-* Dashboard con indicadores y estadísticas.
-* Mejoras y ampliaciones del sistema de inventario.
+**2026**
