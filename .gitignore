@@ -17,3 +17,5 @@ Thumbs.db
 
 # Mongo
 *.lock
+
+facturas/*.pdf
