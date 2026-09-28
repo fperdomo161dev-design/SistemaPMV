@@ -211,7 +211,7 @@ class VentanaProveedores(tk.Toplevel):
         if db is None:
 
             try:
-                from app import db as global_db
+                from SELAH import db as global_db
                 db = global_db
 
             except Exception:
