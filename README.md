@@ -4,9 +4,6 @@ SistemaPMV es una aplicación de gestión de inventario y punto de venta orienta
 
 La aplicación permite administrar productos, empleados, clientes, proveedores, ventas, contabilidad y control de inventario. Además, incorpora autenticación de usuarios mediante librerías de seguridad y cifrado (`hashlib` y `bcrypt`), generación de facturas PDF, envío de correos y herramientas administrativas para la gestión operativa del negocio utilizando tecnologías locales y de fácil implementación.
 
-El proyecto está siendo desarrollado como parte del proceso formativo **ADSO del SENA**, aplicando buenas prácticas de organización de código, control de versiones con Git y trabajo colaborativo mediante GitHub.
-
-Actualmente el sistema opera de manera local utilizando **Python, Tkinter y MongoDB**, permitiendo una implementación sencilla sin requerir servicios externos o infraestructura en la nube.
 
 ---
 
@@ -315,29 +312,39 @@ Introduzca esta contraseña de aplicación junto con el correo electrónico emis
 
 ---
 
-# Instalación del proyecto
 
-## 1. Clonar el repositorio
+#  Instalación y Despliegue del Sistema (.exe)
 
-```bash
-git clone https://github.com/fperdomo161dev-design/SistemaPMV.git
-```
+El software se distribuye empaquetado como una aplicación ejecutable nativa para Windows (`.exe`), por lo que **no requiere la instalación de Python, Git ni librerías de programación en el equipo cliente**.
 
-## 2. Entrar al directorio del proyecto
+---
 
-```bash
-cd SistemaPMV
-```
+## 1. Requisitos Previos del Sistema
 
-## 3. Instalar dependencias
+* **Sistema Operativo:** Windows 10 u 11 (64 bits)[cite: 6].
+* **Base de Datos:** MongoDB Community Server (Ejecutándose localmente).
 
-Ejecute:
+---
 
-```bash
-pip install pymongo pillow reportlab bcrypt
-```
+## 2. Pasos para la Instalación
 
-> **Nota:** `hashlib` viene incluido de forma nativa en Python, por lo que no es necesario instalarlo mediante `pip`.
+### Paso 1: Configurar la Base de Datos
+1. Asegúrese de tener activo el servicio de **MongoDB** en el equipo local[cite: 5].
+2. Si es la primera instalación, restaure la base de datos `zapateria_pmv` ejecutando en la consola de comandos de MongoDB Tools:
+   ```cmd
+   mongorestore --db zapateria_pmv "ruta\al\respaldo\zapateria_pmv"
+   anteriormente descrito
+
+Paso 2: Ejecutar la Aplicación
+Descargue o copie la carpeta del programa SELAH.
+
+Ubique el archivo ejecutable SELAH.exe (o app.exe).
+
+Haga doble clic sobre SELAH.exe para iniciar el sistema[cite: 5].
+
+Nota para el administrador: Todos los componentes visuales, motores de PDF, librerías de encriptación y dependencias están compilados dentro del ejecutable, garantizando una instalación rápida, limpia y sin configuraciones adicionales.
+
+
 
 ---
 
@@ -349,23 +356,11 @@ Credenciales iniciales de prueba almacenadas en la base de datos:
 | :---------------- | :------ | :--------- |
 | **Administrador** | `admin` | `1234`     |
 
-> **Nota:** Estas credenciales son únicamente para pruebas y demostración del proyecto.
+> **Nota:** Estas credenciales son únicamente para pruebas y demostración del proyecto, se debe cambiar la contraseña de inicio para el admon.
 
 ---
 
-# Ejecución del proyecto
 
-Asegúrese de que el servicio de MongoDB esté activo en su equipo.
-
-Luego, desde la carpeta principal del proyecto, ejecute:
-
-```bash
-python app.py
-```
-
-La aplicación abrirá la ventana de inicio de sesión.
-
----
 
 # Capturas y Evidencia Funcional del Sistema
 
@@ -487,31 +482,14 @@ Módulo utilizado para configurar los datos del negocio, factura PDF, clave de a
 
 ![Configuración General](docs/configuracion.png)
 
----
-
-# Trabajo colaborativo — Git & GitHub
-
-El proyecto fue desarrollado mediante trabajo colaborativo utilizando **Git y GitHub**, permitiendo llevar un registro de los cambios realizados por cada integrante del equipo.
-
-## Historial de Commits 
-
-![Commits de Yovanna Rodríguez](docs/colaborativo1.png)
-
-
-
-![Commits de Fredy Perdomo](docs/colaborativo2.png)
 
 ---
 
-# Integrantes
+# Diseñado y elaborado
 
 * **Fredy Perdomo**
 * **Yovanna Rodríguez**
 
 ---
 
-# Proyecto formativo
 
-**ADSO — SENA**
-
-**2026**
